@@ -1,0 +1,49 @@
+# QUE SE HA APLICADO, y si el banco lo vio pasar.
+# La columna «medidas» casa cada fila de bench/historia.jsonl con el commit cuyo CODIGO
+# midio -por `arbol_sha`, el digesto de crates/ + Cargo.*- y no con el que habia en HEAD
+# al medir. No es lo mismo: aqui se mide primero y se commitea despues con la cifra en
+# el mensaje, asi que contando por HEAD la fila caia bajo el commit ANTERIOR y el que
+# contiene el cambio salia a cero. Y ademas se cuentan las PRUEBAS DE DISEÑO, que no
+# pasan por la bascula y viven en bench/registros/pruebas/<nombre>.log.
+# Un 0 sigue queriendo decir algo: que ese commit no dejo ni medida ni prueba.
+commit	cuando	que_hizo	medidas	de_que
+16d0aee	2026-08-18 10:22	libro: el puente con vnervio, con el liston delante	0	
+6f2774a	2026-08-18 10:20	banco: refrescar panel tras las cuatro filas nuevas	0	
+a9fc637	2026-08-18 10:20	libro: cuatro huecos que el barrido dejo a la vista	0	
+8f250de	2026-08-18 10:16	banco: refrescar aplicado.tsv/panel.html tras la v10	0	
+1c31092	2026-08-18 10:15	v10: mas juegos en el mezclador — medido el 04-08, APLICADO catorce dias despues	0	
+ac2e799	2026-08-18 09:48	banco: el corpus sale de /tmp — alli ya se habian perdido CUATRO	0	
+7ed26dd	2026-08-18 09:16	fix(tests): la suite del compresor estaba EN ROJO, y tapaba un segundo rojo	0	
+b1bfdfb	2026-08-17 23:08	banco(f6q6): refrescar aplicado.tsv/panel.html tras el cierre en negativo	30	F6.Q6 salto de match: A/B v8 contra v9 · F6.Q6 salto de match: CONTROL v8 (re-medida, -S) · F6.Q6 salto de match: TRATAMIENTO v9 (umbral 32)
+1fa46de	2026-08-17 23:07	docs(f6q6): el A/B de las ocho cierra el encargo EN NEGATIVO para --max	30	F6.Q6 salto de match: A/B v8 contra v9 · F6.Q6 salto de match: CONTROL v8 (re-medida, -S) · F6.Q6 salto de match: TRATAMIENTO v9 (umbral 32)
+8f37c62	2026-08-17 21:32	banco(f6q6): contestar las cuatro constantes que la v9 dejo sin respuesta	30	F6.Q6 salto de match: A/B v8 contra v9 · F6.Q6 salto de match: CONTROL v8 (re-medida, -S) · F6.Q6 salto de match: TRATAMIENTO v9 (umbral 32)
+1cea559	2026-08-17 21:31	banco(f6q6): el ancla de los modelos leibles sigue a MODELO_MAX, y refresco	30	F6.Q6 salto de match: A/B v8 contra v9 · F6.Q6 salto de match: CONTROL v8 (re-medida, -S) · F6.Q6 salto de match: TRATAMIENTO v9 (umbral 32)
+da77797	2026-08-17 21:29	fix(f6q6): el umbral vuelve al valor medido (32) y el defecto de escritura a la v8	30	F6.Q6 salto de match: A/B v8 contra v9 · F6.Q6 salto de match: CONTROL v8 (re-medida, -S) · F6.Q6 salto de match: TRATAMIENTO v9 (umbral 32)
+3e303fc	2026-08-17 20:56	wip(auto): cierre de turno vcompresor — always-push	1	F6.Q6 salto de match: CONTROL v8
+ef00a3d	2026-08-17 20:40	banco(f6q6): refrescar decisiones-medidas.tsv/panel.html tras la v9	1	F6.Q6 salto de match: CONTROL v8
+18b8d3c	2026-08-17 20:33	feat(f6q6): v9 - el salto de match por byte, y las dos listas derivadas de MODELO	1	F6.Q6 salto de match: CONTROL v8
+6685465	2026-08-17 20:12	docs(f6q6): FASE 1 - el gate de cobertura PASA (2,17x a >=16)	0	
+601a7b5	2026-08-17 20:05	feat(f6q6): contador de cobertura de match tras --features cobertura	0	
+e6d5593	2026-08-17 19:46	fix(f6q5): aplica verbatim los 7 hallazgos de la auditoria adversarial d3	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+7f2cff9	2026-08-17 19:28	banco(f6q5): refrescar aplicado.tsv/panel.html tras la reescritura final	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+f544967	2026-08-17 19:27	fix(f6q5): reescritura final — defecto real es solid=64, no solid=32, y bytes ya no restan entre planos	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+2175730	2026-08-17 18:51	banco(f6q5): refrescar aplicado.tsv/panel.html tras el cierre d3	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+62733c4	2026-08-17 18:50	fix(f6q5): aplica los 10 hallazgos de la auditoria d2 sobre curvas/proyeccion	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+246a529	2026-08-17 18:26	banco(f6q5): refrescar aplicado.tsv/panel.html tras la reestructuracion	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+28dda9e	2026-08-17 18:25	docs(f6q5): reestructura §5 — argumento robusto en cabeza, dos bases separadas	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+db6976e	2026-08-17 18:00	banco(f6q5): refrescar aplicado.tsv/panel.html tras la correccion	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+3d9fb6d	2026-08-17 18:00	fix(f6q5): corrige la fila primer=100% — 0,000% era distancia-1 extrapolada	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+c5d39c8	2026-08-17 17:33	banco(f6q5): refrescar aplicado.tsv/decisiones-medidas.tsv/panel.html tras el asiento	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+e237a39	2026-08-17 17:32	docs(f6q5): NEGATIVO — el primer compartido no pasa las dos mitades del falsador	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+f88c070	2026-08-17 17:27	banco(f6q5): curvas de cebado (distancia + tamaño del primer) y proyección contra el falsador	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+985d178	2026-08-17 15:23	banco(f6q4c3): refrescar aplicado.tsv/panel.html tras el asiento	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+1203152	2026-08-17 15:23	banco(f6q4c3): asiento del negativo en decisiones.tsv y cierre del libro	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+6779536	2026-08-17 15:15	revert(f6q4c3): la compactacion del mezclador no entra al defecto — el falsador se cumplio	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+a77c291	2026-08-17 14:55	banco(f6q4c3): reproduccion independiente del falsador — se confirma NEGATIVO	0	
+2bf1365	2026-08-17 14:37	docs(f6q4c3): NEGATIVO — compactar el mezclador es exacto pero cuesta 5,64% mas instrucciones	0	
+abbeb42	2026-08-17 13:59	wip(auto): cierre de turno vcompresor — always-push	0	
+97ab3b9	2026-08-17 13:02	banco: la tanda de rivales del 17-08, y el logo del producto	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+44527df	2026-08-17 12:35	F7.B NEGATIVO: el reparto de memoria por ocupacion no entra, y el suelo de ruido dice por que	27	F6.Q5 P1 s11 F0 solo · F6.Q5 P1 s11 F1 (a) frio · F6.Q5 P1 s11 F1 (c) primada+historia a distancia=1 · F6.Q5 P1 s11 F2 (a) frio · F6.Q5 P1 s11 F2 (c) primada+hi
+a60ffff	2026-08-17 11:44	F7.A1 velocidad: compilar con target-cpu=x86-64-v3 (AVX2+BMI2+FMA)	25	F6.Q3 archivo entero solid=11 · F6.Q3 archivo entero solid=16 · F6.Q3 archivo entero solid=32 · F6.Q3 archivo entero solid=64 · F6.Q3 s11 (a) frio · F6.Q3 s11 (
+627755b	2026-08-10 15:20	docs(f6q3): corrige el estado de todo-16/32/64.vc en §5.3	25	F6.Q3 archivo entero solid=11 · F6.Q3 archivo entero solid=16 · F6.Q3 archivo entero solid=32 · F6.Q3 archivo entero solid=64 · F6.Q3 s11 (a) frio · F6.Q3 s11 (
+fb3eae4	2026-08-10 15:15	banco(f6q3): §5.3 medido a 12 frames; §7.1 resuelve el falsador	25	F6.Q3 archivo entero solid=11 · F6.Q3 archivo entero solid=16 · F6.Q3 archivo entero solid=32 · F6.Q3 archivo entero solid=64 · F6.Q3 s11 (a) frio · F6.Q3 s11 (

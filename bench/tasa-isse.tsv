@@ -1,0 +1,16 @@
+# CUANTO CORRIGE CADA ETAPA DE LA CADENA ISSE
+# LA MARCA «VIGENTE» SE LEE DEL CODIGO, no se escribe a mano. Antes se escribia,
+# y al cambiar el modelo v3 dejo de ser cierta sin que nadie la tocara: leyendo
+# esta tabla se concluia que habia un 1,1% sin aplicar que YA estaba aplicado.
+# Vigente hoy: 6 (modelo v3). «vs_vigente» se recalcula contra el.
+# ⚠️ LAS MEDIDAS SON DE SU EPOCA. Se tomaron con el modelo de entonces; desde
+# entonces han entrado modelos nuevos y la cadena ISSE. No son falsas, pero no
+# son de ahora — remedido hoy, volver a los valores viejos cuesta 1,9151% y la
+# tabla decia 1,111%: el modelo actual aprovecha MAS el aprendizaje lento.
+# Lo escribe bench/tasas.py.
+tasa	total	vs_vigente
+3	3825714	+0.103
+4	3823090	+0.034
+6  <-- VIGENTE	3821779	+0.000
+8	3823428	+0.043
+12	3827144	+0.140

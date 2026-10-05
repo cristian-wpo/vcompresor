@@ -1,0 +1,34 @@
+# VENDORIZADO DESDE preflate-rs 0.7.6 · https://github.com/microsoft/preflate-rs
+# Copyright (c) Microsoft Corporation. Licencia Apache-2.0 (ver LICENSE en este directorio).
+#
+# POR QUE ESTA AQUI Y NO EN Cargo.lock. No es por poseerlo: es que hay una mejora MEDIDA que no
+# se podia coger desde fuera. preflate re-deflata el plano ENTERO solo para verificarse -41,58 s
+# de sus 172,97, el 24%- porque nacio como herramienta suelta sin nadie que la comprobara. Aqui
+# `vcompresor verify` revisa el archivo completo despues: verificamos dos veces.
+#
+# ⚠️ El nombre del paquete cambia a `preflate` y el de la lib se queda en `preflate_rs` para que
+# los `use` de vc-core no cambien: asi el commit que vendoriza NO mezcla el traslado con ningun
+# cambio de comportamiento, y se puede comprobar que los bytes salen identicos.
+[package]
+name = "preflate"
+version = "0.7.6"
+edition = "2024"
+rust-version = "1.89"
+license = "Apache-2.0"
+authors = ["Kristof Roomp <kristofr@microsoft.com>"]
+description = "preflate-rs 0.7.6 vendorizado. Ver LICENSE y NOTICE-preflate.md."
+
+[lib]
+name = "preflate_rs"
+path = "src/lib.rs"
+
+[dependencies]
+bitcode = "0.6.3"
+byteorder = "1.4"
+cabac = "0.15.0"
+default-boxed = "0.2"
+deranged = "0.5"
+
+[dev-dependencies]
+crc32fast = "1.3"
+env_logger = "0.11"

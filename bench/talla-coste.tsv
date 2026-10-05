@@ -1,0 +1,18 @@
+# EL COSTE DE UN FICHERO POR EXISTIR, separado del coste de sus bytes.
+# tiempo = 49,8 us por fichero + 5,393 ns por byte, en el CARRIL DE TEXTO.
+# OJO: el modelo predice 16,3 s para el arbol real y los medidos son ~306 s. Falla
+# 19x porque estos arboles son todos texto y el arbol real lo dominan JXL y preflate.
+# Vale para el carril de texto; para el arbol entero hace falta un corpus mezclado.
+# Lo escribe bench/talla-tabla.py con los datos de bench/talla-coste.sh.
+talla	ficheros	MiB	seg	Gciclos	us_por_fichero	MB_s
+2 KiB	40000	78.1	2.46	9.9	61.5	31.7
+16 KiB	8327	130.1	1.02	10.6	122.5	127.5
+128 KiB	1041	130.1	0.76	10.0	730.1	171.2
+1 MiB	131	130.1	0.85	10.7	6488.5	153.1
+8 MiB	17	130.1	0.77	10.1	45294.1	169.0
+
+derivado	valor					nota
+us por fichero	49.8					lo que cuesta un fichero SOLO por existir
+ns por byte	5.393					lo que cuesta su contenido
+fichero mediano (1972 B)	60.4 us					el 82% del coste es por fichero
+fichero medio (60530 B)	376.2 us					el 13% del coste es por fichero

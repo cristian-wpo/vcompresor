@@ -1,0 +1,11 @@
+[package]
+name = "vc-spikes"
+version.workspace = true
+edition.workspace = true
+license = "AGPL-3.0-only"
+
+[dependencies]
+preflate-rs = "0.7.6"
+anyhow = "1"
+zstd = "0.13"
+vc-core = { path = "../vc-core" }

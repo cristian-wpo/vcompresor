@@ -1,0 +1,63 @@
+# DEFECTO: `add` cuesta ~24 MB por instantanea AUNQUE NO CAMBIE NI UN BYTE. Medido 2026-07-29.
+# Es TODO indice: +frames = 0 en los cinco casos. Y se repite en cada instantanea.
+#
+# Localizacion, leyendo el propio formato (el pie dice donde acaban los frames):
+caso	ficheros	crece	mas_frames	mas_indice	indice_base
+120/familia imagen+video	244	312	0	312	47497
+500/familia imagen+video	1004	20790546	0	20790546	20868492
+2000/familia imagen+video	3753	23540681	0	23540681	23718572
+500/familia +binarios	1038	20792580	0	20792580	20881204
+500/familia codigo+logs	678	34	0	34	33521
+#
+# No es el numero de ficheros -de 1.004 a 3.753 el indice apenas sube- es la FAMILIA.
+# Aislado con una sola variable, el mismo arbol con y sin cada carril:
+caso	ficheros	entrada	indice_base	mas_indice_por_instantanea
+JPEG con JXL	400	42045802	13866	667
+JPEG SIN JXL	400	42045802	13866	667
+PNG (preflate)	400	30907334	14498642	14441259
+#
+# ES PREFLATE. JXL queda absuelto: identico con y sin el. 400 PNG de 30,9 MB generan 14,5 MB de
+# indice -el 47% de la entrada- y cada instantanea lo duplica entero.
+#
+# DOS PROBLEMAS DISTINTOS, no uno:
+#   1) `add` duplica el registro de CADA fichero por instantanea, con su carga util dentro. La
+#      ruta se prefija con el nombre de la copia, asi que un fichero intacto vuelve a guardarse
+#      entero. Desde F2.60 hay huella de contenido por fichero: se puede compartir el registro.
+#   2) La metadata de preflate vive en el INDICE y pesa el 47% de la entrada en PNG. El indice
+#      se lee ENTERO para abrir el archivo, asi que ademas encarece cada apertura.
+#
+# Y UNA CIFRA QUE NO CUADRA: el programa declara "0,5 MiB of corrections" y el indice pesa
+# 14,5 MB. 29 veces mas. La estadistica preflate_corr NO esta contando lo que de verdad se
+# guarda; hay que arreglar la cuenta antes de fiarse de ella para nada.
+#
+# POR QUE NO SE HABIA VISTO: TODAS las pruebas de instantaneas anteriores -las dos rondas de
+# rotacion, las 30 seguidas, la medida del indice- se hicieron con codigo, SQL y logs, que es
+# justo la familia donde el defecto NO aparece (34 B por instantanea). El corpus de prueba
+# tenia un punto ciego con la forma exacta del fallo.
+
+# ================== CAUSA RAIZ, encontrada ==================
+# El "esqueleto" -todo lo que dentro de un contenedor NO es un flujo DEFLATE- se guarda CRUDO
+# EN EL INDICE (el campo esqueleto de Transform::Deflate, escrito con e.bytes(esqueleto)).
+# Ahi no se trocea, no se deduplica, no pasa por los frames, y `add` lo duplica entero en cada
+# instantanea porque cada instantanea repite el registro de cada fichero.
+#
+# Sobre el arbol de 400 PNG (30.907.334 B de entrada):
+#   nosotros   25.455.333 B (82,36%)   frames 10.956.691   indice 14.498.642 = 57,0% del archivo
+#   zstd -19   26.344.016 B (85,24%)
+#   xz -9e     26.062.848 B (84,33%)
+# El carril GANA (3,4% a zstd, 2,3% a xz) pero deja casi todo en la mesa: los frames solos son
+# el 35,4% de la entrada y la metadata se come la diferencia.
+#
+# POR QUE EL ESQUELETO ES TAN GRANDE EN ESTE CORPUS -y el aviso que va con ello-:
+#   mkBT 17.545.899 B  .  IDAT 12.225.656 B  .  mkTS 612.958  .  prVW 372.847
+# Son PNG de Adobe Fireworks: llevan el documento editable incrustado en chunks privados. El
+# 57% de esos ficheros no es imagen. UN PNG NORMAL ES ~99% IDAT, asi que estas cifras absolutas
+# son de este corpus y NO del formato PNG. El corpus no es representativo y hay que decirlo.
+#
+# LO QUE SI ES GENERAL: cualquier fichero contenedor con una parte grande que no sea DEFLATE
+# -EXIF gordo, chunks privados, miembros almacenados- mete esos bytes en el indice. Y el indice
+# se lee ENTERO para abrir el archivo, ademas de duplicarse por instantanea.
+#
+# EL ARREGLO, para la proxima vuelta: el esqueleto tiene que ir por el camino normal de trozos
+# y frames, como cualquier otro byte. Eso lo trocea, lo deduplica, lo comprime en frames y deja
+# de duplicarse por instantanea: los tres problemas de una vez. Es cambio de formato (MAGIC).

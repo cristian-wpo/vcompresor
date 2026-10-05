@@ -1,0 +1,16 @@
+# EL PASO DEL MEZCLADOR: CUANTO CORRIGE LOS PESOS EN CADA BIT
+# LA MARCA «VIGENTE» SE LEE DEL CODIGO, no se escribe a mano. Antes se escribia,
+# y al cambiar el modelo v3 dejo de ser cierta sin que nadie la tocara: leyendo
+# esta tabla se concluia que habia un 1,1% sin aplicar que YA estaba aplicado.
+# Vigente hoy: >>12 (modelo v3). «vs_vigente» se recalcula contra el.
+# ⚠️ LAS MEDIDAS SON DE SU EPOCA. Se tomaron con el modelo de entonces; desde
+# entonces han entrado modelos nuevos y la cadena ISSE. No son falsas, pero no
+# son de ahora — remedido hoy, volver a los valores viejos cuesta 1,9151% y la
+# tabla decia 1,111%: el modelo actual aprovecha MAS el aprendizaje lento.
+# Lo escribe bench/tasas.py.
+paso	total	vs_vigente
+>>8	4017371	+6.080
+>>9	3891510	+2.757
+>>10	3821779	+0.916
+>>11	3789850	+0.073
+>>12  <-- VIGENTE	3787100	+0.000

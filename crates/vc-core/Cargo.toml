@@ -1,0 +1,19 @@
+[package]
+name = "vc-core"
+version.workspace = true
+edition.workspace = true
+license = "AGPL-3.0-only"
+
+[dependencies]
+anyhow = "1"
+blake3 = "1"
+zstd = "0.13"
+# VENDORIZADO (31-07). Ver crates/preflate/PROCEDENCIA.md: no es por poseerlo, es que
+# preflate re-deflata el plano entero solo para verificarse -41,58 s de sus 172,97, el 24%-
+# y desde fuera no se podia tocar. El nombre de la LIB no cambia, asi que ningun `use` de
+# este crate se mueve: el traslado no se mezcla con ningun cambio de comportamiento.
+preflate-rs = { package = "preflate", path = "../preflate" }
+libc = "0.2"
+chacha20poly1305 = "0.10"
+argon2 = "0.5"
+vc-cm = { path = "../vc-cm" }

@@ -1,0 +1,5 @@
+herramienta	bytes	pct_orig	segundos	ram_mb	mb_s	2a_copia_bytes	2a_copia_seg
+restic --compression max	32713314	7.73	2.5	833	161.4	821	0.69
+borg -C zstd,22	27441043	6.49	280.3	194	1.4	1268	0.35
+vcompresor (por defecto)	21380452	5.05	27.13	1091	14.9	no medido aqui	-
+vcompresor --max	10832017	2.56	414.79	11500	1.0	no medido aqui	-

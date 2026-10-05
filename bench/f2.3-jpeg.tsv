@@ -1,0 +1,22 @@
+# F2.3 carril JPEG-JXL — 2000 JPEG reales del corpus F1, 210255663 B (200,5 MiB)
+# Ryzen 5 3600 (12 hilos), 2026-07-27. Flota concurrente: comparar por user_s, no por wall_s.
+# round-trip: 2000/2000 byte-exactos (blake3) + diff -r del arbol extraido OK.
+herramienta	bytes	pct_original	wall_s	user_s	rss_kb	roundtrip
+zip -9	187320438	89.09	5.58	5.35	3200	n/a
+zstd -19 (tar)	184707065	87.85	64.89	64.75	275072	OK
+7z -mx9	184277451	87.64	39.00	59.87	702848	n/a
+xz -9 (tar)	184057528	87.54	98.40	96.69	690816	OK
+vcompresor --sin-jpeg	185570442	88.26	0.50	1.38	60072	OK
+vcompresor (carril JPEG)	156427326	74.40	28.70	90.78	1476512	OK
+# transcodificados 1988 / rechazados a store 12 (0,60%)
+# ganancia vs xz -9: 15.01%   vs zip -9: 16.49%
+# descompresion (verificar): con carril 31.19s (6,4 MB/s) | sin carril 0.23s (873 MB/s)
+#
+# barrido de esfuerzo JXL (300 ficheros, 4 hilos; MB/s incluyen un zstd-19 de baseline por fichero)
+esfuerzo	ganancia_vs_zstd19_pct	mb_s
+1	7.02	5.05
+2	7.04	4.93
+3	16.04	4.53
+5	16.05	4.42
+7	16.05	4.43
+9	16.90	0.71

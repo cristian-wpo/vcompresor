@@ -1,0 +1,5 @@
+fase	bytes	delta_pct	nota
+F2.53 carril por miembro	21644948	0	base
+F2.54 recursion en deflatados	21499365	-0.673	solo 417 KB alcanzables
+F2.55 tambien los almacenados	19385171	-9.834	18,2 MB de PNG guardados
+(objetivo con JPEG incluido)	18720580	-13.5	falta el carril JXL

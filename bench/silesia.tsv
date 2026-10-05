@@ -1,0 +1,5 @@
+herramienta	bytes	ratio%	comp_s	round_trip
+vcompresor --max	39809371	18.78	178.5/185.6	diff -rq 0
+zpaq -m5	39865426	18.81	167.2/168.1	-
+7z -mx9	48715234	22.99	-	-
+xz -9	48776804	23.01	-	-

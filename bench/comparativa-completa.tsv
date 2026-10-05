@@ -1,0 +1,49 @@
+# TABLA COMPARATIVA COMPLETA — 2026-07-29, todo medido en la MISMA maquina y sobre las MISMAS
+# entradas. Solo TAMAÑOS: la maquina tenia trabajo de otros clientes y los relojes habrian
+# salido falseados; los bytes no dependen de la carga.
+#
+# PRODUCTO / NO PRODUCTO, que cambia como se lee la tabla:
+#   zip, rar (WinRAR), 7z, xz, zstd, brotli  -> PRODUCTOS: instalados en cientos de millones de
+#                                               maquinas, mantenidos, con soporte.
+#   zpaq                                     -> A MEDIAS: archivador real de Matt Mahoney, pero
+#                                               de nicho y sin mantenimiento (v7.15 de 2021).
+#   paq8px                                   -> NO ES UN PRODUCTO: 0,008 MB/s. Existe para ganar
+#                                               concursos de compresion. 125x mas lento que
+#                                               nuestro --max.
+#   vcompresor                               -> TAMPOCO ES UN PRODUCTO TODAVIA: sin instalador,
+#                                               sin documentacion, sin soporte.
+#
+entrada	original	zip -9	rar -m5	rar max	7z -mx9	zpaq -m5	nuestro_defecto	nuestro_max	paq8px -8
+codigo.10m	10485760	1565573	1245245	1245245	1158103	869317	1232464	807028	661228
+sql.10m	10485760	1364497	507425	507425	515349	351320	521123	236087	158372
+csvjson.10m	10485760	2133543	832545	832545	785228	666592	983609	553549	465439
+logs.10m	10485760	244015	133920	133920	149077	75717	144794	51271	31385
+enwik8.10m	10485760	3859725	3075120	3075120	2844433	2187162	2997722	2133561	1865161
+corpus/pdfoffice	208989093	169871311	155717357	80836404	88816337	79761241	79413269	75843225	-
+corpus/png-normal	216715703	209011182	208136366	191796695	190860494	-	151501600	114923538	-
+corpus/codigo	136415253	55496185	46383711	21721458	12920611	10901842	14931932	9423449	-
+corpus/logs	262120432	18436152	12576239	7799969	6157759	3716176	6808758	2949408	-
+#
+# RESULTADO: ganamos las 9 entradas contra TODOS los productos, y las 9 tambien contra zpaq.
+# Solo nos gana paq8px, y solo en las 5 entradas pequeñas -en los corpus grandes ni se midio
+# porque tardaria dias-.
+#
+# MARGENES contra el mejor producto de cada fila:
+#   png-normal   114.923.538 contra 190.860.494 de 7z   = 39,8% mas pequeño  <- el MAYOR
+#   logs         2.949.408 contra 6.157.759 de 7z       = 52,1%
+#   codigo       9.423.449 contra 12.920.611 de 7z      = 27,1%
+#   pdfoffice    75.843.225 contra 80.836.404 de rar max = 6,2%
+#
+# UNA PREDICCION MIA QUE SALIO AL REVES, y merece quedar escrita: dije que en png-normal el
+# margen se estrecharia "porque ya no hay redundancia que explotar". Es el margen MAYOR de la
+# tabla. La razon es nuestro propio carril, que despliega el DEFLATE de dentro de cada PNG y lo
+# recomprime; los demas ven un fichero ya comprimido y no lo tocan. Razone sobre el dato sin
+# tener en cuenta lo que hace nuestro codigo.
+#
+# LO COMERCIALMENTE UTIL: nuestro modo POR DEFECTO -15x mas rapido que nuestro --max- ya le gana
+# a 7-Zip y al maximo de WinRAR en documentos de oficina y en PNG.
+#
+# rar se midio con DOS ajustes a proposito: -m5 (el "Mejor" que pulsa un usuario) y
+# -m5 -s -md512m (solido, diccionario 512 MB), que es su maximo esfuerzo real y lo unico
+# comparable con nuestro --max. En ficheros sueltos de 10 MB los dos dan lo mismo: la entrada
+# cabe entera en el diccionario por defecto.

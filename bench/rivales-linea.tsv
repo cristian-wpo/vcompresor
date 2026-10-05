@@ -1,0 +1,27 @@
+# LA LINEA DE TIEMPO CONTRA LOS RIVALES. Nuestra cifra ABSOLUTA sobre una entrada, fechada, con
+# el commit y el fichero de donde sale — para poder ponerla al lado de la constante del rival.
+#
+# POR QUE ESTA TABLA EXISTE APARTE DEL LIBRO MAYOR. `historia.jsonl` empieza el 29-07 y esta
+# hecho de ABLACIONES: dos configuraciones del MISMO commit. Eso decide un cambio y no dibuja un
+# recorrido contra nadie, que necesita LA MISMA configuracion del producto medida en DIAS
+# distintos. Los cinco primeros puntos del corpus de codigo son anteriores a la bascula y viven
+# en los documentos de su dia; a partir del 03-08 los pone la bascula sola (etiqueta `RIVALES:`).
+#
+# CADA CIFRA SE COMPRUEBA, NO SE CREE. `panel.py` hace `git show <commit>:<fuente>` y busca el
+# numero DENTRO. Si no esta, el punto sale marcado como NO VERIFICADO en el propio panel en vez
+# de dibujarse como si fuera bueno. Una cifra escrita a mano que nadie vuelve a comprobar es
+# exactamente lo que este banco existe para no tener.
+#
+# QUE NO ENTRA AQUI, y es lo que mas se cae: las filas de `historia.jsonl` sobre la muestra
+# `codigo` (los barridos F6/F8/F9 del troceado) son el MISMO corpus con el troceador movido a
+# mano — 16,7 MB contra los 14,9 del modo por defecto. Meterlas dibujaria una subida que nunca
+# paso. Un punto solo entra si es el PRODUCTO tal y como se ejecuta.
+#
+# `config`: `max` = `--max` · `defecto` = el modo rapido, el que corre sin banderas.
+fecha	muestra	config	bytes	commit	fuente
+2026-07-27	corpus/codigo	defecto	15115500	1aa0672	docs/f2.10-similitud-y-donde-estamos.md
+2026-07-27	corpus/codigo	max	10128120	2f33207	docs/f2.18-21-superado.md
+2026-07-27	corpus/codigo	max	9685683	0bb44c9	docs/f2.29-zpaq-superado-y-ablacion.md
+2026-07-28	corpus/codigo	max	9657771	fa1f379	README.md
+2026-07-29	corpus/codigo	defecto	14931932	cb7cdf8	bench/comparativa-completa.tsv
+2026-07-29	corpus/codigo	max	9423449	cb7cdf8	bench/comparativa-completa.tsv

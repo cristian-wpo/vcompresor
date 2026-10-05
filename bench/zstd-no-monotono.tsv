@@ -1,0 +1,18 @@
+# ZSTD NO ES MONOTONO. Mismos 32 MiB (120 ficheros de codigo + 120 de logs + 78 de sql
+# concatenados), comprimidos por zstd de linea de comandos. El nivel 1 GANA al 2, 3, 4 y 5.
+#
+# Esto se descubrio sospechando de nuestro codigo: la sonda daba una curva con zigzag y di por
+# hecho que el fallo era mio. No lo era. Nuestra sonda dio 2.058.112 B al nivel 1 y el CLI da
+# 2.058.004: 108 bytes de diferencia, que es la cabecera del contenedor.
+#
+# LA CONSECUENCIA DE DISEÑO: no se puede hornear una tabla de ratios y elegir el nivel a partir
+# de ella. Con una tabla horneada, la herramienta habria elegido el nivel 3 creyendo que gana
+# al 1, y se habria equivocado un 20%. Sobre dato real la curva hay que MEDIRLA en cada dato.
+nivel	bytes	pct
+1	2058004	6.133
+2	2136781	6.368
+3	2485654	7.407
+4	2496530	7.440
+5	2248334	6.700
+9	1894401	5.645
+19	1496481	4.459

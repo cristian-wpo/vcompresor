@@ -1,0 +1,7 @@
+muestra	bytes	sha256_x86	sha256_arm	iguales
+sql-peq (3 MB)	94286	1c10632fa173e06e	1c10632fa173e06e	SI
+sql-gra (9 MB)	216488	233053fb4525e44e	233053fb4525e44e	SI
+codigo-peq	108857	5ce672c0fbae7c8e	5ce672c0fbae7c8e	SI
+codigo-gra	364612	d82ed410a163682f	d82ed410a163682f	SI
+enwik8-peq	647698	b4e793569900b5ce	b4e793569900b5ce	SI
+enwik8-gra	1857295	bfbcb55202151c32	bfbcb55202151c32	SI

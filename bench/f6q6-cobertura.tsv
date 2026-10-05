@@ -1,0 +1,43 @@
+# F6.Q6 FASE 1 - COBERTURA DE MATCH POR UMBRAL. Lo produce vc-cm compilado con
+# `--features cobertura` (crates/vc-cm/src/lib.rs, mod cobertura). Una fila por (muestra, umbral).
+#
+# QUE ES CADA COLUMNA
+#   cub / cub_pct . bytes que al EMPEZARSE tenian una racha del match PRINCIPAL (el de 6 bytes,
+#                   el unico que verifica la coincidencia desde la v4) de longitud >= umbral.
+#   aci / aci_pct . de esos, en cuantos el byte que el match predecia era EL BUENO. Es la
+#                   apuesta que hace el salto: saltar el conjunto es fiarse de esta cifra.
+#   cub5 / cub5_pct . lo mismo tomando el MEJOR de los cinco match. Cota superior: los otros
+#                   cuatro no verifican, asi que enganchan mas y mienten mas.
+#   cota_amdahl   . 1/(1-cub_pct), el techo del ahorro si el salto fuera GRATIS. Es una COTA,
+#                   no una prediccion: el byte saltado sigue pagando match + una etapa SSE.
+#
+# csvjson-r NO es la csvjson.10m historica: esa no sobrevivio al barrido de /tmp y no hay
+# generador en el repo. Es una RECONSTRUCCION declarada; ver docs/f6-salto-de-match.md §1.
+juego	muestra	sha256_12	bytes	umbral	cub	cub_pct	aci	aci_pct	cub5	cub5_pct	cota_amdahl
+texto5	codigo.10m	132c06fedd3d6c29	10485760	16	5729017	54.6362	5645286	98.5385	6060022	57.7929	2.2044
+texto5	codigo.10m	132c06fedd3d6c29	10485760	32	4813864	45.9086	4775281	99.1985	5117097	48.8004	1.8487
+texto5	codigo.10m	132c06fedd3d6c29	10485760	64	3949019	37.6608	3929435	99.5041	4240632	40.4418	1.6041
+texto5-r	csvjson-r.10m	ec9b5d73a7b6f602	10485760	16	8144130	77.6685	8099976	99.4578	8415424	80.2557	4.4780
+texto5-r	csvjson-r.10m	ec9b5d73a7b6f602	10485760	32	7624352	72.7115	7601132	99.6954	7865348	75.0098	3.6645
+texto5-r	csvjson-r.10m	ec9b5d73a7b6f602	10485760	64	7153110	68.2174	7143449	99.8649	7333033	69.9333	3.1464
+texto5	enwik8.10m	5d7a724fcfbea8f6	10485760	16	598706	5.7097	559429	93.4397	723499	6.8998	1.0606
+texto5	enwik8.10m	5d7a724fcfbea8f6	10485760	32	265092	2.5281	254843	96.1338	316065	3.0142	1.0259
+texto5	enwik8.10m	5d7a724fcfbea8f6	10485760	64	92050	0.8779	90225	98.0174	109952	1.0486	1.0089
+texto5	logs.10m	3b5e9832787abc8c	10485760	16	8945650	85.3124	8873666	99.1953	9796838	93.4299	6.8084
+texto5	logs.10m	3b5e9832787abc8c	10485760	32	7850175	74.8651	7786150	99.1844	9236762	88.0886	3.9785
+texto5	logs.10m	3b5e9832787abc8c	10485760	64	6524304	62.2206	6490851	99.4873	8335750	79.4959	2.6469
+texto5	sql.10m	a11cd4efaa116b36	10485760	16	6918227	65.9774	6797947	98.2614	8155633	77.7782	2.9392
+texto5	sql.10m	a11cd4efaa116b36	10485760	32	5303016	50.5735	5211111	98.2669	6728039	64.1636	2.0232
+texto5	sql.10m	a11cd4efaa116b36	10485760	64	2866691	27.3389	2803325	97.7896	4324212	41.2389	1.3763
+no-texto3	bin.8m	f2b9edb9892e76fe	5313968	16	1420926	26.7395	1363056	95.9273	1765854	33.2304	1.3650
+no-texto3	bin.8m	f2b9edb9892e76fe	5313968	32	804577	15.1408	781180	97.0920	1054718	19.8480	1.1784
+no-texto3	bin.8m	f2b9edb9892e76fe	5313968	64	357577	6.7290	349591	97.7666	497907	9.3698	1.0721
+no-texto3	pdf.8m	41343d3980017359	961642	16	19941	2.0736	19569	98.1345	21096	2.1937	1.0212
+no-texto3	pdf.8m	41343d3980017359	961642	32	15913	1.6548	15735	98.8814	16981	1.7658	1.0168
+no-texto3	pdf.8m	41343d3980017359	961642	64	11999	1.2478	11907	99.2333	12918	1.3433	1.0126
+no-texto3	png.8m	267e871a9ae1c568	141864	16	1960	1.3816	1916	97.7551	1991	1.4035	1.0140
+no-texto3	png.8m	267e871a9ae1c568	141864	32	1376	0.9699	1346	97.8198	1393	0.9819	1.0098
+no-texto3	png.8m	267e871a9ae1c568	141864	64	585	0.4124	567	96.9231	602	0.4244	1.0041
+CORPUS8	-	-	58846274	16	31778557	54.0027	-	-	-	-	2.1740
+CORPUS8	-	-	58846274	32	26678365	45.3357	-	-	-	-	1.8293
+CORPUS8	-	-	58846274	64	20955335	35.6103	-	-	-	-	1.5530

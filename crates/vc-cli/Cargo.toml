@@ -1,0 +1,22 @@
+[package]
+name = "vc-cli"
+version.workspace = true
+edition.workspace = true
+license = "AGPL-3.0-only"
+
+[[bin]]
+name = "vcompresor"
+path = "src/main.rs"
+
+[dependencies]
+vc-core = { path = "../vc-core" }
+anyhow = "1"
+libc = "0.2"
+preflate-rs = "0.7.6"
+zstd = "0.13"
+
+# FUSE solo existe en Linux. El codigo de `mount` ya estaba protegido con
+# #[cfg(target_os = "linux")], pero la DEPENDENCIA no lo estaba: cargo intentaba construir
+# fuser en macOS aunque nadie fuera a usarla, y eso impedia compilar el programa ENTERO.
+[target.'cfg(target_os = "linux")'.dependencies]
+fuser = "0.14"

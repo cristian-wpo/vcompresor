@@ -1,0 +1,11 @@
+# QUE CARRIL SE PAGA A QUE PRECIO. Lo escribe bench/carriles.py con las filas
+# «F13 carril:» de bench/historia.jsonl. NO se edita a mano.
+# «compra» = bytes que el carril ahorra · «cuesta» = CPU-s que añade.
+# El disco se alquila TODOS LOS MESES y la CPU se paga UNA VEZ: por eso la
+# retencion decide tanto como el precio. Las columnas son € por PB de entrada.
+carril	n	compra_bytes	compra_pct	cuesta_cpu_s	cuesta_pct	medible	S3_1m	S3_12m	S3_60m	Backblaze_1m	Backblaze_12m	Backblaze_60m	bulk_1m	bulk_12m	bulk_60m	disco_1m	disco_12m	disco_60m
+preflate	4	73633199	7.073	298.0	59.24	si	-1420	5163	33888	-1862	-147	7338	-1948	-1175	2196	-1984	-1613	5
+jpeg	4	40944409	3.933	177.9	35.37	si	-872	2788	18761	-1118	-164	3997	-1166	-736	1138	-1186	-980	-80
+e8e9	4	1582528	0.152	0.2	0.03	NO-ruido	12	153	771	2	39	200	0	17	90	-0	8	42
+agrupar	4	1044841	0.100	-1.8	-0.36	NO-ruido	21	114	522	14	39	145	13	24	72	13	18	41
+logts	4	318632	0.031	0.2	0.05	NO-ruido	1	30	154	-1	7	39	-1	2	17	-1	0	7

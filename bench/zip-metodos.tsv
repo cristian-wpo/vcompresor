@@ -1,0 +1,7 @@
+tipo	metodo	miembros	bytes
+otro	deflate	921	57418546
+png	ALMACENADO	47	18207701
+jpeg	ALMACENADO	87	4778590
+png	deflate	5	417790
+jpeg	deflate	4	343889
+otro	ALMACENADO	10	390

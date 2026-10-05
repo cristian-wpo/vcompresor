@@ -1,0 +1,37 @@
+==================================================================================================
+EL NIVEL OPTIMO DEPENDE DEL PRECIO. Por eso la respuesta correcta era una PERILLA.
+==================================================================================================
+  restic --compression max: 7.579% a 133.9 MiB/s  (31,938,582 B, mismo arbol)
+
+   nivel    ratio    MiB/s  TB guard.  CPU €/año          S3   Backblaze        bulk       disco
+  ----------------------------------------------------------------------------------------------
+       1   8.365%    473.0      1,000        428     -22,907      -5,168      -1,733        -269
+       3   7.603%    457.2        909        442        +333        +877        +982      +1,027
+       5   7.061%    417.1        844        485     +16,866      +5,153      +2,885      +1,918
+       7   6.523%    377.6        780        536     +33,229      +9,379      +4,760      +2,792
+       9   6.294%    327.1        752        618     +40,138     +11,118      +5,498      +3,103
+      12   6.207%    197.5        742      1,024     +42,396     +11,407      +5,405      +2,848
+      15   6.035%     82.1        721      2,464     +46,223     +11,339      +4,584      +1,705
+      17   5.407%     38.5        646      5,257     +62,597     +13,540      +4,040          -9
+      19   5.059%     13.6        604     14,893     +63,610      +6,679      -4,346      -9,045
+
+  EL QUE GANA a cada precio:
+    S3 Standard              nivel 19      +63,610 €/PB-año  (1.00x lo que da el 19)
+    Backblaze B2 / Wasabi    nivel 17      +13,540 €/PB-año  (2.03x lo que da el 19)
+    bulk europeo             nivel  9       +5,498 €/PB-año  (el 19 PIERDE dinero aqui)
+    disco propio             nivel  9       +3,103 €/PB-año  (el 19 PIERDE dinero aqui)
+
+==================================================================================================
+LO QUE ESTO CAMBIA
+==================================================================================================
+  El nivel 17 pesa solo +6.9% mas que el 19 y va 2.83x mas rapido.
+  A precio Backblaze eso DOBLA el dinero. A precio S3 empatan. En disco barato, el 19
+  pierde dinero y gana el 9.
+
+  Y el suelo del conducto —trocear, hashear, escribir— esta en 473 MiB/s:
+  3.5x MAS RAPIDO que restic. Del nivel 1 al 9 el reloj apenas se mueve
+  (0,8 -> 1,2 s): por debajo del 12, zstd no es el cuello. Lo caro era el 19 y solo el 19.
+
+  Al nivel 3 pesamos 1.003x lo que restic y vamos 3.4x mas rapido:
+  mismo tamaño, un tercio del reloj.
+==================================================================================================

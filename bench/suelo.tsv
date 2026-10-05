@@ -1,0 +1,23 @@
+# EL SUELO FISICO DE VDEFLATE, medido en esta maquina. Lo escribe bench/suelo.sh.
+# NO SE EDITA A MANO: es el arreglo del hallazgo P10 —estas cifras vivian copiadas
+# dentro de bench/vdeflate.py y caducaron dos veces el mismo dia—. Quien mide
+# escribe; quien informa lee.
+clave	valor	de_donde
+ancho_escribir_gb_s	14.40	memset de 512 MiB x4, medido aqui mismo
+ancho_copiar_gb_s	17.20	memcpy de 512 MiB x4
+simbolos	257576834	contados por el propio vc-inflate, no estimados
+salida_bytes	6033274133	plano producido por los 1.973 flujos
+bytes_copiados	5872479327	los que vienen de coincidencias: se releen del buffer
+copias	96782028	tokens de copia
+suelo_escribir_seg	0.42	SAL / ancho de escritura
+suelo_releer_seg	0.34	bytes_copiados / ancho de copia
+ciclos	40277380060	perf cycles:u
+instrucciones	116233121405	perf instructions:u
+ipc	2.886	instrucciones por ciclo
+ciclos_por_simbolo	156.4	el numero que hay que bajar
+instr_por_simbolo	451.3	
+nuestro_seg	12.35	reloj de vc-inflate sobre el banco entero
+suelo_fisico_seg	0.76	escribir la salida MAS releer las coincidencias
+distancia_al_suelo_x	16.2	cuantas veces por encima del minimo fisico
+commit	b05f051	
+fecha	2026-07-31 07:29	

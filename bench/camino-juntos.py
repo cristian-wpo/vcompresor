@@ -1,0 +1,128 @@
+# -*- coding: utf-8 -*-
+"""EL CAMINO A «¿CUANTOS FICHEROS A LA VEZ LE COMPENSA VER AL MEZCLADOR?».
+
+Lo pide el dueño: «probar si aun no se hace, y con camino». Y el instrumento vuelve a hacer lo
+que hace: encontrar los fallos del que midio.
+
+Lo escribe bench/camino-juntos.py.
+"""
+import csv, collections
+
+R = [
+("P1", "¿Cuantas veces le preguntamos al nucleo lo mismo?", "HALLAZGO DEL EXPERIMENTO, no del producto",
+ "Cada fila escribe un fichero temporal por grupo y lanza un PROCESO por grupo. A N=1 son 256 "
+ "arranques del binario para comprimir 11 MB. El arranque no falsea los BYTES —que es lo que se "
+ "compara— pero hace inutilizable el reloj de esta prueba.",
+ "Por eso esta ficha no da ni un numero de tiempo: los bytes son deterministas y el reloj de aqui "
+ "no vale. Decirlo es parte del resultado."),
+
+("P2", "¿Cuantas veces leemos el mismo byte?", "AVISO",
+ "Los 256 ficheros se leen UNA vez a memoria y de ahi salen las nueve filas. Bien. Pero cada fila "
+ "los vuelve a ESCRIBIR a disco concatenados: 9 × 11,4 MB de escritura para una pregunta que es "
+ "de bytes de salida.",
+ "Se podria alimentar por tuberia. No se hizo y no cambia el resultado."),
+
+("P3", "¿Reservamos memoria por el caso peor o por el real?", "NO APLICA al experimento",
+ "El generador tiene 11,4 MB en RAM. Nada que optimizar.", "—"),
+
+("P4", "¿Tiramos algo que ya habiamos calculado?", "SI, Y A PROPOSITO",
+ "Las nueve filas recomprimen los MISMOS bytes con distinto agrupamiento. No se puede reutilizar "
+ "nada: eso ES el experimento.", "—"),
+
+("P5", "¿El ORDEN de las fases obliga a repetir trabajo?", "NO APLICA", "—", "—"),
+
+("P6", "¿Estamos optimizando la perilla que importa?", "HALLAZGO — LA PERILLA ERA OTRA",
+ "La pregunta era «¿cuantos ficheros a la vez?» y la respuesta es «cuantos mas mejor, siempre»: "
+ "-39,75% de 1 a 256, monotono. Pero el control del orden enseño que hay una SEGUNDA perilla que "
+ "nadie estaba mirando: con TODO en un solo grupo, ordenado por ruta da 1.354.391 B y barajado "
+ "1.372.410. MISMOS BYTES, MISMO GRUPO, y ordenar vale 1,33%.",
+ "Y eso habla del agrupador, que esta medido en 0,108% sobre el arbol entero. No son el mismo "
+ "montaje, asi que NO se puede decir que el agrupador valga mas — pero la pregunta «¿cuanto vale "
+ "ordenar bien?» deja de estar cerrada con aquel numero."),
+
+("P7", "¿La justificacion se llego a medir?", "🚨 HALLAZGO — MEDI OTRA COSA Y LE PUSE LA ETIQUETA EQUIVOCADA",
+ "La primera curva la corri con `--level 9` SIN `--max`, y la titule «el mezclador». Sin `--max` "
+ "el archivador usa EL CARRIL RAPIDO: no es vc-cm. Se veia en dos sitios y no mire ninguno hasta "
+ "que algo mas fallo — iba a 53,6 MB/s (vc-cm va a 0,17) y VC_MEM no cambiaba NI UN BYTE, que es "
+ "imposible si vc-cm estuviera corriendo.",
+ "Repetida con --max la forma es la misma pero mas fuerte: -39,75% contra -30,58%. La conclusion "
+ "sobrevivio; la etiqueta no. ⚠️ Si el resultado hubiera sido distinto entre los dos motores, "
+ "habria publicado un numero del carril rapido llamandolo mezclador."),
+
+("P8", "¿Hacemos el mismo trabajo dos veces con parametros distintos?", "LIMPIO",
+ "Las nueve filas son el mismo dato con distinto agrupamiento, que es el eje.", "—"),
+
+("P9", "¿Pagamos el caso general para servir al caso raro?", "ES LA PREGUNTA DE PRODUCTO Y QUEDA ABIERTA",
+ "Si mas ficheros juntos siempre paga, ¿por que el frame son 64 MiB y no mas? Ya esta contestado "
+ "en parte y en otra ficha: la curva de frames se dio la vuelta el 31-07 y 256 MiB YA GANA en "
+ "bytes (-0,493%). Se queda en 64 por RAM y por granularidad de la dedup, no porque comprima "
+ "mejor.",
+ "O sea que el techo de esta curva ya esta topado por una decision tomada por otro motivo, y eso "
+ "hay que decirlo cada vez que se cite el -39,75%."),
+
+("P10", "¿El numero viaja con su contexto?", "AVISO — tres contextos",
+ "(1) 256 ficheros de CODIGO, los primeros en orden de ruta, o sea del mismo arbol: el caso mas "
+ "favorable a juntar. (2) 11,4 MB en total, que cabe entero en un frame. (3) Los porcentajes son "
+ "contra N=1, que es el peor caso posible y por eso el -39,75% suena enorme.",
+ "Los tres van en la cabecera de bench/juntos-curva.py."),
+
+("P11", "¿Lo que medimos sigue siendo lo que creemos?", "🚨 ES EL MISMO HALLAZGO QUE P7, y por eso se repite",
+ "Durante una hora «el mezclador» eran los numeros de zstd. La pregunta P11 existe exactamente "
+ "para eso y la habria cazado antes si se hubiera hecho al empezar en vez de al final.",
+ "La guardia barata que faltaba: comprobar que VC_MEM mueve los bytes ANTES de creerse que se "
+ "esta midiendo vc-cm. Cuesta dos compresiones."),
+
+("P12", "¿El instrumento conserva todo lo que la medida produjo?", "HALLAZGO — SIN ARREGLAR",
+ "Las tres curvas (rapido, mezclador, barajado) estan en bench/registros/salidas/ como texto, "
+ "pero NO pasaron por bench/mide.sh: no estan en historia.jsonl, no llevan carga ni ciclos y el "
+ "panel no las ve. Es el mismo agujero que el de entrelazar y el que tenia vlz hasta hoy.",
+ "⚠️ Tres experimentos seguidos con el mismo fallo: el carril del banco deberia ser lo PRIMERO "
+ "que se escribe, no lo ultimo."),
+
+("P13", "¿Quien comprueba la prueba?", "HALLAZGO — EL CONTROL EXISTIO Y DECIDIO",
+ "El escalon del -22,02% tenia dos explicaciones incompatibles: umbral del compresor o contenido. "
+ "El control -barajar el orden con semilla fija- las separa: el escalon SE MUEVE, luego es "
+ "contenido. Y por el camino murieron dos hipotesis mias: el umbral de 6 MiB de `bits_para` (los "
+ "dos lados ya lo pasaban) y la dedup («10 trozos unicos de 10», o sea ninguna).",
+ "Es el contraste con el camino de entrelazar, donde el control positivo FALTABA. Aqui si estaba, "
+ "y por eso el escalon tiene explicacion en vez de leyenda."),
+
+("P14", "¿Corremos TODAS nuestras suites?", "NO APLICA", "No se ha cambiado nada del producto.", "—"),
+
+("P15", "¿Es esta la MEJOR prueba posible?", "NO — y la mejor esta ESCRITA Y SIN CORRER",
+ "Agrupar por NUMERO DE FICHEROS no es un eje limpio: los ficheros varian mucho de tamaño, asi "
+ "que a 128 el grupo mayor eran 7,27 MB y a 256 eran 11,45. bench/juntos-porbytes.py agrupa por "
+ "BYTES y deja el eje limpio. Se escribio y NO SE HA CORRIDO todavia.",
+ "⚠️ Mientras no se corra, el -39,75% mezcla dos cosas: mas dato junto Y grupos mas grandes de "
+ "forma desigual."),
+
+("P16", "¿Se puede medir SIN construir?", "SI, Y ASI SE HIZO TODO",
+ "Las tres curvas salen del binario que ya existe y de una perilla que ya existe (--max) mas un "
+ "guion de veinte lineas. No se ha tocado ni una linea del producto para contestar la pregunta.",
+ "Y el hallazgo del ORDEN (1,33%) tampoco necesito codigo: solo barajar la lista de entrada."),
+]
+
+with open("bench/camino-juntos.tsv", "w", newline="") as f:
+    f.write("# EL CAMINO A «¿cuantos ficheros a la vez le compensa ver al mezclador?» (dueño, 01-08).\n")
+    f.write("# 🚨 P7/P11: la primera curva la corri SIN --max y la titule «el mezclador» — sin --max el\n")
+    f.write("# archivador usa el carril RAPIDO, no vc-cm. La conclusion sobrevivio; la etiqueta no.\n")
+    f.write("# 🔑 P6: la perilla que importaba era OTRA — el ORDEN dentro del grupo vale 1,33% con los\n")
+    f.write("# mismos bytes en el mismo grupo unico.\n")
+    w = csv.writer(f, delimiter="\t")
+    w.writerow(["id", "la_pregunta", "veredicto", "que_se_encontro", "con_que_se_midio"])
+    w.writerows(R)
+
+c = collections.Counter(r[2].split("—")[0].strip() for r in R)
+print(f"\nbench/camino-juntos.tsv: {len(R)} preguntas\n")
+for r in R:
+    print(f"  [{r[2][:38]:<38}] {r[0]:<4} {r[1]}")
+print()
+print("  " + " · ".join(f"{k}: {v}" for k, v in c.most_common()))
+print()
+print("  LO QUE DECIDE, y son dos:")
+print("  P7/P11 — medi el carril RAPIDO durante una hora creyendo que era el mezclador. Las dos")
+print("  señales estaban a la vista (53,6 MB/s cuando vc-cm va a 0,17; VC_MEM sin mover un byte) y")
+print("  no mire ninguna hasta que otra cosa fallo. La guardia que faltaba cuesta dos compresiones.")
+print()
+print("  P6 — la perilla que importaba no era «cuantos ficheros» sino EL ORDEN: mismos bytes, mismo")
+print("  grupo unico, y ordenar por ruta contra barajar vale un 1,33%.")

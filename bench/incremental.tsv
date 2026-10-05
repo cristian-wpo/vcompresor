@@ -1,0 +1,6 @@
+copia	archivo_bytes	segundos	trozos_nuevos	nota
+1 (desde cero)	138997	17.9	500	500 ficheros, 2,4 MB
+2 (mismo arbol)	138973	3.6	0	el archivo ENCOGE 24 B
+3 (+1 fichero, 1 cambiado)	146034	6.5	2	-
+restic 2a copia	+821	0.69	-	referencia
+borg 2a copia	+1268	0.35	-	referencia

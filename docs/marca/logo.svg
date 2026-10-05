@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="vcompresor">
+  <title>vcompresor</title>
+  <defs>
+    <!-- Paleta de marca VerticeLabs: cian #2FD3D3 -> azul #3B5BFF -> #2A46D8. SIN morado. -->
+    <linearGradient id="vc-g" x1="0.05" y1="0" x2="0.95" y2="1">
+      <stop offset="0" stop-color="#2FD3D3"/>
+      <stop offset="0.5" stop-color="#3B5BFF"/>
+      <stop offset="1" stop-color="#2A46D8"/>
+    </linearGradient>
+
+    <!-- Las RANURAS: cortan la V en bandas que se APRIETAN al bajar.
+         El paso va de 22 px arriba a 3 px abajo, y el corte de 5 px a 2.
+         Eso es la compresion: la misma materia, cada vez mas junta. -->
+    <mask id="vc-ranuras">
+      <rect width="256" height="256" fill="#fff"/>
+      <g fill="#000">
+        <rect y="62"  width="256" height="5"/>
+        <rect y="84"  width="256" height="5"/>
+        <rect y="103" width="256" height="4"/>
+        <rect y="119" width="256" height="4"/>
+        <rect y="132" width="256" height="4"/>
+        <rect y="143" width="256" height="3"/>
+        <rect y="152" width="256" height="3"/>
+        <rect y="159" width="256" height="3"/>
+        <rect y="165" width="256" height="2"/>
+        <rect y="170" width="256" height="2"/>
+        <rect y="174" width="256" height="2"/>
+        <rect y="177" width="256" height="2"/>
+      </g>
+    </mask>
+  </defs>
+
+  <!-- LA V. Es una V de verdad, no una insinuacion: se lee a 16 px. -->
+  <path d="M46 46 L128 198 L210 46"
+        fill="none" stroke="url(#vc-g)" stroke-width="40"
+        stroke-linecap="round" stroke-linejoin="round"
+        mask="url(#vc-ranuras)"/>
+</svg>

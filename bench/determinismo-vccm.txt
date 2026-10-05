@@ -1,0 +1,14 @@
+Determinismo cross-arch de vc-cm (context-mixing entero) — 2026-07-25
+Muestra: 1 MiB de código real. vc-cm compilado en AMBAS arquitecturas (mismo main.rs, sin deps).
+
+1) COMPRESIÓN byte-idéntica entre arquitecturas:
+   x86 (server, AMD Ryzen)  : sha256(det1m.cm)     = 2d54848aa0e6fac76aa31f2d0378c6a78e01ee72dd70f3b454281e47d612d3fa
+   ARM (Mac, Apple Silicon) : sha256(det1m-arm.cm) = 2d54848aa0e6fac76aa31f2d0378c6a78e01ee72dd70f3b454281e47d612d3fa
+   -> IDÉNTICOS (cmp OK). La salida comprimida NO depende de la arquitectura.
+
+2) DECODE cruzado: el .cm generado en x86 se descomprime en ARM -> byte-exacto al original (cmp OK).
+
+Por qué: todo el camino de probabilidad es aritmética ENTERA (tablas stretch/squash precomputadas
+por fórmula determinista, StateMap y mezclador en punto fijo, coder aritmético de 32 bits). Sin
+float => sin no-determinismo de coma flotante. Esta es la condición dura del brief que nncp/cmix
+(float) y las redes GPU NO cumplen.

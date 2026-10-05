@@ -1,0 +1,8 @@
+ficheros: 12
+
+crudo      compacto     12469167   sangrado     13352911   x1.07
+
+herramienta            compacto       sangrado      peor%     s.comp   s.sang
+zstd_19                 4072716        4078504      0.14%        3.0      3.6
+vcompresor_max          3751739        3752447      0.02%       66.3     65.5
+FIN-JSONJSONL-CENTINELA

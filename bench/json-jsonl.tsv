@@ -1,0 +1,4 @@
+herramienta	compacto	sangrado	peor_pct
+en crudo	12469167	13352911	7.09
+zstd -19	4072716	4078504	0.14
+vcompresor --max	3751739	3752447	0.02

@@ -1,0 +1,44 @@
+# CACHÉ DE RIVALES — se mide UNA VEZ y no se vuelve a medir.
+# El resultado de un rival sobre una entrada dada es una CONSTANTE: no cambia nunca.
+# Lo único que se re-mide en cada iteración es lo NUESTRO.
+# Sólo hay que reponer una fila si cambia la entrada o la versión del rival.
+#
+# entrada	rival	version	bytes	seg	rss_mb	fecha
+codigo.10m	zpaq -m5	7.15	869317	18.3	280	2026-07-25
+codigo.10m	paq8px -8	v216	661228	1286.8	2524	2026-07-25
+codigo.10m	paq8px -4	v216	673763	-	660	2026-07-28
+codigo.10m	xz -9e	5.4	1145328	3.5	155	2026-07-25
+codigo.10m	zstd -19	1.5	1186227	2.5	95	2026-07-25
+codigo.10m	brotli -11	1.1	1155385	9.4	116	2026-07-25
+sql.10m	zpaq -m5	7.15	351320	25.2	300	2026-07-25
+sql.10m	paq8px -8	v216	158372	1114.9	2470	2026-07-25
+sql.10m	paq8px -4	v216	163824	-	660	2026-07-28
+sql.10m	xz -9e	5.4	398352	9.5	131	2026-07-25
+sql.10m	zstd -19	1.5	466793	4.9	94	2026-07-25
+sql.10m	brotli -11	1.1	403861	22.6	119	2026-07-25
+csvjson.10m	zpaq -m5	7.15	666592	18.3	279	2026-07-25
+csvjson.10m	paq8px -8	v216	465439	1304.1	2500	2026-07-25
+csvjson.10m	xz -9e	5.4	741724	4.0	156	2026-07-25
+csvjson.10m	zstd -19	1.5	795086	3.3	94	2026-07-25
+csvjson.10m	brotli -11	1.1	751319	10.2	111	2026-07-25
+logs.10m	zpaq -m5	7.15	75717	18.8	277	2026-07-25
+logs.10m	paq8px -8	v216	31385	1048.1	2437	2026-07-25
+logs.10m	xz -9e	5.4	126448	8.0	124	2026-07-25
+logs.10m	zstd -19	1.5	138120	4.8	93	2026-07-25
+logs.10m	brotli -11	1.1	126046	2.4	100	2026-07-25
+enwik8.10m	zpaq -m5	7.15	2187162	24.6	306	2026-07-25
+enwik8.10m	paq8px -8	v216	1865161	1193.4	2155	2026-07-25
+enwik8.10m	nncp-lstm	-	2615543	3127.7	108	2026-07-25
+enwik8.10m	xz -9e	5.4	2843328	5.0	156	2026-07-25
+enwik8.10m	zstd -19	1.5	2922193	4.6	96	2026-07-25
+enwik8.10m	brotli -11	1.1	2827632	18.3	129	2026-07-25
+codigo.10m	nncp-lstm	-	1164944	3293.6	108	2026-07-25
+corpus/codigo	zpaq -m5	7.15	10901842	130.5	-	2026-07-28
+corpus/logs	zpaq -m5	7.15	3716176	178.3	-	2026-07-28
+corpus/sql	zpaq -m5	7.15	8981541	150.0	-	2026-07-28
+corpus/csvjson	zpaq -m5	7.15	1828613	108.2	-	2026-07-28
+silesia	zpaq -m5	7.15	39865426	167.6	-	2026-07-28
+silesia	7z -mx9	-	48715234	-	-	2026-07-25
+silesia	xz -9	5.4	48776804	-	-	2026-07-25
+arbol50mb	zpaq -m5	7.15	4101117	163.3	-	2026-07-28
+corpus/pdfoffice	zpaq -m5	7.15	79761241	190	-	2026-07-29

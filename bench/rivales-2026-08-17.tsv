@@ -1,0 +1,16 @@
+# RIVALES — 2026-08-17. SOLO BYTES (deterministas: no dependen de la carga; el reloj va aparte y en serie).
+# entrada: corpus de codigo congelado, 136475130 bytes en 9.491 ficheros
+# tar equivalente para los compresores de flujo: 149452800 bytes
+# maquina: vertice (AMD Ryzen 5 3600). Todos en la MISMA tanda y sobre las MISMAS entradas.
+herramienta	bytes
+zip -9	30705489
+gzip -9	24619040
+rar -m5 -s -md512m	16246830
+zstd -19 --long	13465136
+vcompresor (defecto)	13415749
+brotli -q 11	13155365
+7z -mx9	12761603
+xz -9e	12751136
+lrzip -z	11516022
+zpaq -m5	9744091
+vcompresor --max	8266736

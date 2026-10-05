@@ -1,0 +1,39 @@
+# VDEFLATE — el proyecto propio de DEFLATE.
+# NO es un compresor: es un REPRODUCTOR. Coge un DEFLATE que ya existe, lo desmonta
+# hasta sus decisiones y lo vuelve a montar byte a byte.
+# Existe porque preflate es el 78% del reloj del archivador, es de terceros, y falla
+# en el 8,7% de los flujos reales entrando en panico.
+# Lo escribe bench/vdeflate.py.
+seccion	clave	valor	detalle	extra
+fase	1 · inflar	HECHO	Deshacer el DEFLATE y sacar el plano, exactamente como lo saca zlib.	9,6% del 78% · bin/vc-inflate: 1.973 de 1.973 flujos dan el plano IDENTICO. Sin nota parcial.
+fase	1b · capturar	HECHO	Guardar las DECISIONES del codificador original: tokens (literal o copia), el tipo de cada bloque, la cabecera dinamica entera y la secuencia RLE en crudo, mas el simbolo de longitud y distancia que se uso de verdad. Todo esto se leia ya y se tiraba.	0% del 78% · Prueba que re-ejecuta los tokens y comprueba que reconstruyen el plano. Y medido que no cuesta nada: 280,9 contra 282,9 MB/s, -0,7%, por debajo del ruido.
+fase	2 · re-emitir	HECHO	Volver a producir el flujo comprimido BYTE A BYTE. Lo dificil no es comprimir: es que un DEFLATE admite muchas codificaciones igual de legales y hay que devolver la que habia.	23,9% del 78% · bin/vc-redeflate: 1.973 de 1.973 vuelven a salir identicos, a la primera.
+fase	3 · estimar	CENSADA — LA FORMA ESTA MAL, NO LOS PARAMETROS	Dado SOLO el plano, encontrar los ajustes del codificador original que reproducen esos tokens, y guardar unicamente las divergencias. Es lo que convierte la descripcion completa del flujo en unas correcciones pequeñas.	66,5% del 78% · 🔑 CENSO DEL 01-08 (bin/vc-censo-codificadores), Y ES LO QUE DECIDE EL PROYECTO. Nuestra fase 3 pregunta «¿cual de los NUEVE NIVELES DE zlib produjo esto?». preflate no pregunta eso: enumera los ALGORITMOS DE HASH REALES de los codificadores del mundo -zlib con su desplazamiento y mascara exactos, el rapido de miniz, libdeflate con y sin hash secundario, zlib-ng, crc32c- y prueba CUAL DE ELLOS EXPLICA el flujo observado. Corrido SU estimador sobre NUESTROS 1.973 flujos: 55,7% zlib clasico, 20,1% Libdeflate4Fast, 13,5% Libdeflate4, y el resto entre RandomVector (3,4%), crc32c (2,8%), zlib-ng (1,4%) y miniz (1,0%). UN TERCIO DEL BANCO ES libdeflate, y solo el 42,1% de los flujos son COMPATIBLES CON zlib. O sea que los nueve niveles de zlib son la forma correcta para el 55,7% y la EQUIVOCADA para el 44,3%: eso no se afina cambiando umbrales, se reescribe cambiando la pregunta. Y hay DOS EJES MAS que no modelamos en absoluto: la estrategia (64,7% perezoso con CINCO juegos de umbrales distintos) y sobre todo QUE SE METE EN EL DICCIONARIO (66,7% mete todo, 14,0% solo el primer trozo de cada coincidencia). Ese segundo eje explica fallos que parecian de longitud: si el codificador original solo indexaba el primer trozo, nuestra cadena tiene candidatos que la suya NO TENIA y predecimos coincidencias que el no podia haber encontrado. MEDIDO el 2026-07-31 con bin/vc-prediccion y bin/vc-fase3, y el resultado es NEGATIVO y hay que decirlo: estimar los nueve niveles de zlib por flujo -su tabla real, con voraz/perezoso, good_length, max_lazy, nice_length, max_chain y TOO_FAR- acierta el 87,71% de los SIMBOLOS y deja el coste en el 13,14% del DEFLATE. Es 8 veces mejor que describirlo todo (104,51%) y sigue siendo 7,7 veces peor que preflate (1,70%). DOS COSAS QUE SE APRENDIERON MIDIENDO. (a) La primera version solo puntuaba las COPIAS y daba un 84,70%; contando tambien los literales -que tambien hay que guardar- baja al 82,10%. Una ⚠️ Y ESE 82,10% CADUCO SIN QUE NADIE LO TOCARA, corregido el 01-08: el numero real es 87,71%. No aparece en NINGUNA salida de medida -solo vivia en esta prosa- y las TRES corridas preservadas de bin/vc-fase3 (F17, commits 9ffc460, 7be26b4 y 2078652) dicen 87,71% las tres. La causa mas probable es el propio commit 9ffc460, «un solo modelo de coste»: cambio `Cuenta::fallos()`, y `fallos()` es lo que elige QUE CONFIGURACION gana en cada flujo, asi que cambio tambien el acierto. Es P11 del camino otra vez -un arreglo invalida en silencio el numero de otra parte- y la leccion es que un numero que solo vive en la prosa no tiene quien lo caduque. medida que solo mira la mitad de los simbolos no es optimista, es falsa. (b) La comparacion con preflate NO es de igual a igual: preflate revienta con un panic en 171 de los 1.973 flujos y su 1,70% esta medido solo sobre los 1.802 que acepta. Tiene el examen mas facil y aun asi gana. DONDE SEGUIR, y sale de la propia tabla: el grueso de los fallos es «otra longitud» (9,1% de los simbolos), no la distancia ni la estrategia. O sea que el codificador original no elegia la coincidencia mas larga con estos parametros: el banco tiene flujos de zopfli, libdeflate, Go o Java, que hacen busqueda optima o casi, y los nueve niveles de zlib no los alcanzan. Lo bueno: el 67% de esos fallos de longitud son de 3 bytes o menos, o sea baratos de corregir.
+fase	4 · acelerar	EN OBRA	El decodificador iba bit a bit, que es el metodo de `puff` y fue una decision deliberada: el mas lento y el mas facil de demostrar correcto. Cerrada la correccion, se cambio por copia por lotes, arboles fijos cacheados y tabla de 9 bits. Queda el acumulador de 64 bits.	— del 78% · P10 CERRADO el 2026-07-31: las cifras del suelo ya NO estan escritas aqui. Las mide bench/suelo.sh y las deja en bench/suelo.tsv; este fichero solo las lee. Estuvieron a mano y caducaron dos veces el mismo dia —decian 279 ciclos y 24,7x cuando ya eran 171,8 y 14,4—, que es exactamente lo que la pregunta P10 pregunta.
+cobertura	bloque almacenado (btype 00)	1.920	si	
+cobertura	bloque de arboles fijos (01)	1.003	si	
+cobertura	bloque de arboles dinamicos (10)	10.805	si	
+cobertura	flujos con mas de un bloque	1.375 (hasta 143 bloques)	si	
+cobertura	simbolos de longitud	29 de 29	si	
+cobertura	simbolos de distancia	30 de 30	si	
+cobertura	distancia minima	1 — copias solapadas	si	
+cobertura	distancia maxima	32.765 de 32.768 posibles	si	
+cobertura	longitud maxima	258, el tope del formato	si	
+cobertura	longitud 258 como codigo 285	17.243.340	si	
+cobertura	longitud 258 como codigo 284+31	0 en el banco — CERRADO A MANO	si, fabricado	
+cobertura	arbol de distancias de un solo simbolo	17	si	
+cobertura	RLE 16 / 17 / 18 de la cabecera	216.396 / 20.178 / 6.276	si	
+cobertura	hclen	de 12 a 19	si	
+suelo	escribir los 6,03 GB de salida	0,76 s	a 14,4 GB/s, medido en esta maquina	
+suelo	SUELO FISICO	0,76 s	lo que no se puede evitar: hay que producir esos bytes igual	
+suelo	suelo algoritmico a 10 ciclos/simbolo (a 3 GHz)	0,86 s	257.576.834 simbolos contados. no estimados	
+suelo	HOY	12,35 s	156,4 ciclos y 451,3 instrucciones por simbolo	
+suelo	distancia al suelo	16,2 x	medido el 2026-07-31 07:29 en el commit b05f051	
+herramienta	crates/vc-core/src/inflate.rs	modulo	Fase 1 y 1b: descomprime, y captura el flujo entero si se le pide.	
+herramienta	crates/vc-core/src/deflate_emit.rs	modulo	Fase 2: vuelve a emitir. No decide nada — replica lo que el inflate capturo.	
+herramienta	bin/vc-inflate	arnes	El plano tiene que salir identico al de zlib en los 1.973. Sin nota parcial.	
+herramienta	bin/vc-redeflate	arnes	El flujo comprimido tiene que salir identico en los 1.973. Contrato mas duro que el anterior.	
+herramienta	bin/vc-cobertura	medida	Que partes del RFC 1951 ejercita el banco. Lo que salga a cero es lo que el «1.973 de 1.973» NO cubre — que es distinto de estar mal, y peor de ignorar.	
+herramienta	bin/vc-preflate-coste	medida	Reparte el 78% de preflate entre inflar, estimar y re-deflate, y cuenta cuantos flujos rechaza preflate-rs.	
+herramienta	bench/saca-deflate.py	banco	Regenera los 1.973 flujos reales desde los PNG del corpus. El banco no se guarda: se rehace.	
+herramienta	bench/suelo.sh	medida	El ancho de banda de la maquina y los ciclos por simbolo, para saber a cuanto estamos del minimo fisico.	

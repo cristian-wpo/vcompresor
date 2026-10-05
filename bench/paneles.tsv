@@ -1,0 +1,21 @@
+# NUESTRAS HERRAMIENTAS. El desplegable del menu sale de aqui: una linea por
+# herramienta y su panel. Anadir una herramienta es anadir una linea, no tocar
+# codigo.
+#
+# Este fichero vive COPIADO en el bench de cada herramienta, igual que
+# PANEL-CIENTIFICO.md. Un fichero compartido acoplaria proyectos que tienen que
+# poder abrirse y defenderse por separado — y NERVIO esta antes de la solicitud
+# de prioridad.
+#
+# ruta_file  se usa cuando el panel se abre a doble clic (file://). Es RELATIVA,
+#            asi que los directorios de panel tienen que ser HERMANOS en el Mac:
+#              .../claude/vcompresor-panel/panel.html
+#              .../claude/nervio-panel/panel.html
+# url_http   se usa cuando lo sirve un http (arranca.sh). Cada panel tiene su
+#            puerto, solo en 127.0.0.1: de estas maquinas no sale nada.
+#
+# El criterio va escrito porque el panel lo publica (R10 de PANEL-CIENTIFICO.md):
+# el enlace que se usa depende del protocolo con el que estas viendo la pagina.
+slug	nombre	que_es	ruta_file	url_http
+vcompresor	vcompresor	Archivador montable: router por contenido, recompresion reversible byte-exacta y montaje FUSE.	../vcompresor-panel/panel.html	http://127.0.0.1:8777/panel.html
+nervio	NERVIO	Codec y transporte de video EN VIVO para videollamada: el modelo de escena vive toda la sesion.	../nervio-panel/panel.html	http://127.0.0.1:8778/panel.html

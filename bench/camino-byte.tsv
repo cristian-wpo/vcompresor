@@ -1,0 +1,18 @@
+# EL CAMINO DEL BYTE, medido DIRECTO con VC_FASES en una sola pasada.
+# 43.298 ficheros, 2.499 MiB, maquina a carga 6,4. Sin restar totales.
+# EL COMPRESOR ES EL 10,9% DEL TRABAJO. El 69,9% son las transformadas.
+# El TOTAL no es el reloj (348,7 s): las fases de compresion van en otros hilos.
+# Lo escribe bench/camino-byte.py con los datos de bench/fases.sh.
+fase	segundos	pct	veces	us_por_vez	que_es
+transformar	264.01	69.9	5560	47483.7	preflate + E8E9 + log-ts: deshacer y rehacer DEFLATE
+jxl	64.12	17.0	677	94705.6	JPEG -> JXL sin perdida
+comprimir	41.25	10.9	1654	24937.8	el codec: zstd o vc-cm. SOLO el 10,9%
+hash	3.16	0.8	192310	16.4	blake3 de cada trozo
+leer+trocear	2.02	0.5	62742	32.2	
+agrupar	1.20	0.3	1	1201666.4	reordenar por similitud. Por ablacion salia 0,78% ± 2,05%; aqui 0,32% exacto
+dedup+copiar	0.64	0.2	96672	6.6	
+recorrer	0.43	0.1	1	425026.4	
+enrutar	0.34	0.1	44093	7.6	
+meta+xattr	0.20	0.1	59640	3.3	
+stat	0.17	0.0	43298	4.0	solo las envueltas en cron(F_STAT); strace ve 5,73 statx/fichero en total
+esperar	0.14	0.0	1654	81.9	lo que el principal espera a los hilos de compresion. Casi cero = NO son el cuello

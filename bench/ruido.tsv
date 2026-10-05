@@ -1,0 +1,6 @@
+que	valor	nota
+repeticiones identicas	6	misma entrada, mismo binario, maquina quieta
+recorrido en ciclos	0.71%	suelo de ruido REAL de una medida de ciclos
+deriva sistematica	~0.5-1%	la base se mide una vez al principio, con la maquina fria
+resolucion practica	~1.3%	por debajo de eso una sola medida no afirma nada
+ruido en RATIO	0	la salida es determinista: misma config = mismos bytes

@@ -1,0 +1,12 @@
+/target
+
+# Acompanante del modo en vivo del panel: DERIVADO y con reloj de pared dentro.
+# panel.html SI se versiona (es determinista y su diff significa "hay medidas nuevas");
+# esto no: cambiaba en cada generacion y ya habia ensuciado 28 commits.
+bench/datos.json
+bench/.medida.lock
+bench/__pycache__/
+
+# La rejilla en curso: es un registro de MEDIDAS y se versiona cuando esta completa,
+# no mientras se llena (cada tanda parcial ensuciaria el diff sin decir nada).
+# bench/rejilla.tsv YA se versiona: la rejilla esta COMPLETA (4.620 puntos, 5 muestras)

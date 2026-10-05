@@ -1,0 +1,21 @@
+[package]
+name = "vc-cm"
+version.workspace = true
+edition.workspace = true
+license = "AGPL-3.0-only"
+
+[lib]
+name = "vc_cm"
+path = "src/lib.rs"
+
+[[bin]]
+name = "vc-cm"
+path = "src/main.rs"
+
+[features]
+# F6·Q6 · contador de COBERTURA de match. Instrumento de medida: solo lee `mm_len`/`mm_ptr` y
+# suma en globales, asi que NO puede mover un byte de la salida (se comprueba con sha256 de la
+# salida con y sin la bandera). No entra nunca en una compilacion de producto.
+cobertura = []
+
+[dependencies]

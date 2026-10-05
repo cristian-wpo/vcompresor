@@ -1,0 +1,137 @@
+tipo	modelo	indice	base	sin_el	cambio_pct
+sql	orden-0	0	97898	97814	-.085803
+sql	orden-1	1	97898	98156	.263539
+sql	orden-2	2	97898	97898	0
+sql	orden-3	3	97898	97898	0
+sql	orden-4	4	97898	97898	0
+sql	orden-5	5	97898	97898	0
+sql	palabra	6	97898	98995	1.120554
+sql	orden-8	7	97898	97898	0
+sql	sparse-d2	8	97898	97910	.012257
+sql	sparse-d1+3	9	97898	98120	.226766
+sql	indirecto-1	10	97898	98570	.686428
+sql	columna x sep	11	97898	97855	-.043923
+sql	encima x col	12	97898	98053	.158328
+sql	encima x byte	13	97898	97977	.080696
+sql	orden-12	14	97898	97898	0
+sql	pareja-palabra	15	97898	97854	-.044944
+sql	pareja-minus	16	97898	98276	.386116
+sql	columna2 x sep2	17	97898	97858	-.040858
+sql	encima2 x col2	18	97898	98142	.249239
+sql	encima2 x byte	19	97898	97874	-.024515
+sql	forma-texto	20	97898	97982	.085803
+sql	forma-texto-larga	21	97898	98066	.171607
+sql	sparse-paso4	22	97898	97874	-.024515
+sql	sparse-paso8	23	97898	97874	-.024515
+sql	sparse-paso2y4	24	97898	97938	.040858
+sql	indirecto-2	25	97898	99060	1.186949
+sql	num:digito-encima	26	97898	98232	.341171
+sql	num:largo	27	97898	97919	.021450
+sql	num:delta	28	97898	97938	.040858
+sql	num:prefijo	29	97898	98449	.562830
+sql	txt:trigrama	30	97898	97925	.027579
+sql	txt:raiz	31	97898	97858	-.040858
+sql	txt:trigrama-raices	32	97898	97930	.032687
+sql	txt:skip-grama	33	97898	99109	1.237001
+csvjson	orden-0	0	8784	8744	-.455373
+csvjson	orden-1	1	8784	8791	.079690
+csvjson	orden-2	2	8784	8784	0
+csvjson	orden-3	3	8784	8784	0
+csvjson	orden-4	4	8784	8784	0
+csvjson	orden-5	5	8784	8784	0
+csvjson	palabra	6	8784	8832	.546448
+csvjson	orden-8	7	8784	8784	0
+csvjson	sparse-d2	8	8784	8799	.170765
+csvjson	sparse-d1+3	9	8784	8795	.125227
+csvjson	indirecto-1	10	8784	8864	.910746
+csvjson	columna x sep	11	8784	8822	.432604
+csvjson	encima x col	12	8784	8908	1.411657
+csvjson	encima x byte	13	8784	8847	.717213
+csvjson	orden-12	14	8784	8784	0
+csvjson	pareja-palabra	15	8784	8789	.056921
+csvjson	pareja-minus	16	8784	8816	.364298
+csvjson	columna2 x sep2	17	8784	8768	-.182149
+csvjson	encima2 x col2	18	8784	8794	.113843
+csvjson	encima2 x byte	19	8784	8789	.056921
+csvjson	forma-texto	20	8784	8801	.193533
+csvjson	forma-texto-larga	21	8784	8828	.500910
+csvjson	sparse-paso4	22	8784	8782	-.022768
+csvjson	sparse-paso8	23	8784	8809	.284608
+csvjson	sparse-paso2y4	24	8784	8800	.182149
+csvjson	indirecto-2	25	8784	9342	6.352459
+csvjson	num:digito-encima	26	8784	8816	.364298
+csvjson	num:largo	27	8784	8777	-.079690
+csvjson	num:delta	28	8784	8816	.364298
+csvjson	num:prefijo	29	8784	8802	.204918
+csvjson	txt:trigrama	30	8784	8790	.068306
+csvjson	txt:raiz	31	8784	8786	.022768
+csvjson	txt:trigrama-raices	32	8784	8790	.068306
+csvjson	txt:skip-grama	33	8784	8809	.284608
+codigo	orden-0	0	134235	134270	.026073
+codigo	orden-1	1	134235	134438	.151227
+codigo	orden-2	2	134235	134235	0
+codigo	orden-3	3	134235	134235	0
+codigo	orden-4	4	134235	134235	0
+codigo	orden-5	5	134235	134235	0
+codigo	palabra	6	134235	136291	1.531642
+codigo	orden-8	7	134235	134235	0
+codigo	sparse-d2	8	134235	134262	.020113
+codigo	sparse-d1+3	9	134235	134421	.138562
+codigo	indirecto-1	10	134235	134863	.467836
+codigo	columna x sep	11	134235	134233	-.001489
+codigo	encima x col	12	134235	134279	.032778
+codigo	encima x byte	13	134235	134251	.011919
+codigo	orden-12	14	134235	134235	0
+codigo	pareja-palabra	15	134235	134237	.001489
+codigo	pareja-minus	16	134235	134412	.131858
+codigo	columna2 x sep2	17	134235	134222	-.009684
+codigo	encima2 x col2	18	134235	134231	-.002979
+codigo	encima2 x byte	19	134235	134216	-.014154
+codigo	forma-texto	20	134235	134523	.214549
+codigo	forma-texto-larga	21	134235	134531	.220508
+codigo	sparse-paso4	22	134235	134211	-.017879
+codigo	sparse-paso8	23	134235	134223	-.008939
+codigo	sparse-paso2y4	24	134235	134277	.031288
+codigo	indirecto-2	25	134235	134512	.206354
+codigo	num:digito-encima	26	134235	134218	-.012664
+codigo	num:largo	27	134235	134215	-.014899
+codigo	num:delta	28	134235	134217	-.013409
+codigo	num:prefijo	29	134235	134241	.004469
+codigo	txt:trigrama	30	134235	134242	.005214
+codigo	txt:raiz	31	134235	134363	.095355
+codigo	txt:trigrama-raices	32	134235	134286	.037993
+codigo	txt:skip-grama	33	134235	134757	.388870
+bin	orden-0	0	1339148	1339848	.052272
+bin	orden-1	1	1339148	1342354	.239405
+bin	orden-2	2	1339148	1339148	0
+bin	orden-3	3	1339148	1339148	0
+bin	orden-4	4	1339148	1339148	0
+bin	orden-5	5	1339148	1339148	0
+bin	palabra	6	1339148	1340298	.085875
+bin	orden-8	7	1339148	1339148	0
+bin	sparse-d2	8	1339148	1348195	.675578
+bin	sparse-d1+3	9	1339148	1356410	1.289028
+bin	indirecto-1	10	1339148	1342375	.240974
+bin	columna x sep	11	1339148	1339329	.013516
+bin	encima x col	12	1339148	1339280	.009857
+bin	encima x byte	13	1339148	1339164	.001194
+bin	orden-12	14	1339148	1339148	0
+bin	pareja-palabra	15	1339148	1338306	-.062875
+bin	pareja-minus	16	1339148	1339588	.032856
+bin	columna2 x sep2	17	1339148	1339187	.002912
+bin	encima2 x col2	18	1339148	1339106	-.003136
+bin	encima2 x byte	19	1339148	1339079	-.005152
+bin	forma-texto	20	1339148	1342366	.240302
+bin	forma-texto-larga	21	1339148	1340763	.120599
+bin	sparse-paso4	22	1339148	1346923	.580593
+bin	sparse-paso8	23	1339148	1342365	.240227
+bin	sparse-paso2y4	24	1339148	1351247	.903484
+bin	indirecto-2	25	1339148	1340661	.112982
+bin	num:digito-encima	26	1339148	1339077	-.005301
+bin	num:largo	27	1339148	1339082	-.004928
+bin	num:delta	28	1339148	1339083	-.004853
+bin	num:prefijo	29	1339148	1339062	-.006421
+bin	txt:trigrama	30	1339148	1339148	0
+bin	txt:raiz	31	1339148	1338289	-.064145
+bin	txt:trigrama-raices	32	1339148	1339148	0
+bin	txt:skip-grama	33	1339148	1339148	0

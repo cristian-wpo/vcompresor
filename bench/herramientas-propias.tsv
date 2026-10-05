@@ -1,0 +1,16 @@
+# NUESTRAS HERRAMIENTAS, cada una con lo suyo. Lo escribe bench/propias.py.
+# Lo unico a mano es QUE existe y QUE sustituye; el resto se LEE del banco.
+# «preguntas» son las del CAMINO que se le han hecho a esa herramienta.
+# «medidas» son sus filas del libro mayor. Un cero ahi no es que sea barata:
+# es que nunca ha pasado por la bascula.
+clave	nombre	que_es	sustituye_a	codigo	pestana	estado	preguntas_hechas	hallazgos	preguntas_sin_hacer	medidas	tablas_propias	sus_tablas
+archivador	el archivador	La tubería entera: recorrer, enrutar, transformar, trocear, deduplicar, comprimir y escribir. Es lo que el usuario ejecuta.	—  (es nuestro por definición)	crates/vc-core	Pirámide	—	23	22	4	232	38	bucles camino-comprimir carriles censo comparativa-completa cruce-tamano determinismo-arquitectura economia-nivel economia escala espera-memoria f2.7-deps f264-descartado f265-carga-unica guardia-memoria incremental instantaneas-indice json-jsonl memoria muchas-instantaneas multibench nivel-zstd nuestro pdfoffice perfil piramide rivales robustez rotacion silesia ultimo-resultado vs-restic-borg vuelo-unico zip-composicion zip-hipotesis zip-metodos zip-miembros zip-progreso
+vdeflate	vdeflate	Nuestro DEFLATE: desenvuelve el DEFLATE que ya traen los PNG, los .gz y los .zip para poder comprimirlo mejor, y lo vuelve a montar idéntico.	preflate-rs 0.7.6  ·  flate2	crates/vc-core/src/inflate.rs, deflate_emit.rs	Vdeflate	—	57	21	8	0	4	descomprimir suelo vdeflate-preguntas vdeflate
+vlz	vlz	Nuestro códec LZ: el que de verdad convierte los bytes en menos bytes. Busca repeticiones y las codifica con un codificador aritmético adaptativo.	zstd  (58.395 líneas de C)	crates/vlz	—  (recién nacida)	—	0	0	0	0	1	zstd-no-monotono
+vc-cm	vc-cm	Nuestro códec de mezcla de contextos, el de `--max`. Predice cada bit combinando 43 modelos. Comprime mucho más y va mucho más lento.	zstd, en el modo --max	crates/vc-cm	Modelos	CONVIVEN	7	2	4	0	13	ablacion codec-bpb coste-huellas coste m2-portipo m4-pesos piramide-vccm poda talla-poda tasa-isse tasa-mezclador tasa-statemap vccm-sin-medir
+vc-cdc	vc-cdc	Nuestro troceador: parte los ficheros por el contenido y no por posición, que es lo que permite deduplicar entre ficheros parecidos.	fastcdc	crates/vc-core/src/cdc.rs	Piezas	REEMPLAZADA	7	5	2	0	1	talla-coste
+vc-formato	vc-formato	Nuestro serializador del índice y de los frames.	bincode + serde	crates/vc-core/src/formato.rs	Piezas	REEMPLAZADA	5	2	4	0	0	
+vc-jpeg	vc-jpeg	Transcodifica JPEG a JXL y vuelve, bit a bit. Hoy se apoya en libjxl.	libjxl (C++)	crates/vc-core/src/jxl.rs	Piezas	EN OBRA	4	1	6	0	1	f2.3-jpeg
+vc-cripto	vc-cripto	El cifrado del archivo.	chacha20poly1305 + argon2  (se quedan)	crates/vc-core/src/cripto.rs	Piezas	—	6	1	4	0	0	
+vc-cli	vc-cli	El intérprete de argumentos y la decisión por dinero (`--price`).	clap	crates/vc-cli	—	REEMPLAZADA	7	2	3	0	0	
+banco	el banco de pruebas	Los guiones que miden, la báscula y este panel. No entra en el producto, pero decide todo lo que entra.	—  (es nuestro por definición)	bench/	Métodos	—	11	5	2	0	19	auditoria-camino camino-byte desperdicio ejecutables herramientas-propias herramientas metodos paneles plan precomputar preguntas-camino preguntas ruido sonda syscalls tallas tecnicas terceros veredictos

@@ -1,0 +1,5 @@
+iter 1/60  ficheros_ok=200  95 files/s  expand=0
+iter 51/60  ficheros_ok=10200  79 files/s  expand=0
+iter 60/60  ficheros_ok=12000  73 files/s  expand=0
+
+FUZZ OK: 12000 ficheros round-trip byte-idénticos en 164.7s. no-expansión violada: 0 veces.

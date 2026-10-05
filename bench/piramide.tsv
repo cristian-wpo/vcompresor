@@ -1,0 +1,25 @@
+# LA PIRAMIDE: todo el gasto de recursos, del primer dato al programa completo.
+# Cada peldaño lleva RELOJ y CPU por separado, y dice si va EN SERIE o EN PARALELO,
+# porque un peldaño paralelo y uno en serie no cuestan lo mismo aunque marquen el
+# mismo numero: el paralelo gasta CPU, el de la serie gasta ESPERA.
+# «compra_pct» = cuanto CRECE el archivo si se apaga esa pieza (de la ablacion).
+# Lo escribe bench/piramide.py con lo que mide VC_FASES=1.
+nivel	id	padre	nombre	reloj_s	cpu_s	modo	veces	us_por_vez	compra_pct	nota
+0	todo		EL PROGRAMA ENTERO	52.69	197.46	—	1	52690000.0		10,824 ficheros, 544.9 MiB -> 291.1 MiB. RAM pico 1.55 GB. 3.7 nucleos de 10 ocupados de media.
+1	serie	todo	EN SERIE — el hilo principal	41.35	41.35	serie	1	41350000.0		78% del reloj. ESTO ES LO QUE LA PERSONA ESPERA: un solo hilo, nada se solapa. Bajar un segundo aqui es un segundo menos de espera.
+1	paralelo	todo	EN PARALELO — los otros hilos	14.31	143.09	paralelo	1	14309000.0		143 s de CPU repartidos entre 10 hilos = ~14 s de reloj. Es 78% del TRABAJO y solo ~27% de la ESPERA.
+2	comprimir	paralelo	comprimir	133.28	133.28	paralelo	524	254351.1		
+2	transformar	serie	transformar	37.79	37.79	serie	1402	26954.4	7.326	
+2	jxl	paralelo	jxl	8.48	8.48	paralelo	170	49882.4	4.766	
+2	hash	serie	hash	1.40	1.40	serie	21805	64.2		
+2	agrupar	paralelo	agrupar	1.33	1.33	paralelo	1	1330000.0	0.097	
+2	enrutar	serie	enrutar	1.23	1.23	serie	11012	111.7		
+2	leer+trocear	serie	leer+trocear	0.52	0.52	serie	15102	34.4		
+2	recorrer	serie	recorrer	0.20	0.20	serie	1	200000.0		
+2	dedup+copiar	serie	dedup+copiar	0.11	0.11	serie	9513	11.6		
+2	stat	serie	stat	0.06	0.06	serie	21648	2.8		
+2	meta+xattr	serie	meta+xattr	0.04	0.04	serie	21735	1.8		
+2	esperar	serie	esperar	0.00	0.00	serie	524	0.0		
+3	transformar:preflate	transformar	preflate	0.00	0.00	serie	0		7.136	58,5% del CPU total al ablacionarlo. El reparto de segundos dentro de «transformar» sale de la ABLACION (apagar la pieza y restar), no de un cronometro propio.
+3	transformar:E8E9	transformar	E8E9	0.00	0.00	serie	0		0.185	coste no medible, por debajo del ruido. El reparto de segundos dentro de «transformar» sale de la ABLACION (apagar la pieza y restar), no de un cronometro propio.
+3	transformar:log-ts	transformar	log-ts	0.00	0.00	serie	0		0.005	coste no medible, y no compra nada. El reparto de segundos dentro de «transformar» sale de la ABLACION (apagar la pieza y restar), no de un cronometro propio.

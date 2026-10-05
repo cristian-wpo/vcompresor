@@ -1,0 +1,42 @@
+# QUE LE FALTA A vcompresor PARA SER UN PRODUCTO DE RESPALDO. Auditoria del 2026-07-29.
+# Cada linea se PROBO ejecutandola, no se dedujo del codigo: bench/producto.sh la reproduce.
+#
+grupo	punto	estado	consecuencia
+metadatos	permisos unix	OK	-
+metadatos	fecha de modificacion	OK	-
+metadatos	enlaces simbolicos	OK	-
+metadatos	directorios vacios	OK	-
+metadatos	enlaces duros	FALTA	vuelven duplicados; un arbol con miles se restaura ocupando el doble
+metadatos	ficheros dispersos	FALTA	100 MB logicos y ~0 reales vuelven ocupando 100 MB REALES; una VM o BD dispersa explota
+metadatos	dueno y grupo (uid/gid)	FALTA	al restaurar como root TODO queda del usuario que restaura
+metadatos	ficheros especiales (fifo/dev)	FALTA	se saltan en silencio
+metadatos	atributos extendidos (xattr)	SIN PROBAR	el fs de la prueba no los soporta; SELinux, capabilities y metadatos de macOS viven ahi
+funciones	listar el contenido	FALTA	no se puede saber que hay dentro sin extraerlo entero
+funciones	extraer un fichero suelto	FALTA	recuperar 4 KB de 62 GB obliga a desplegarlo entero. DESCALIFICANTE para respaldo
+funciones	borrar instantanea / retencion	FALTA	el archivo crece para siempre; no hay "guarda 30 dias"
+funciones	exclusiones (--exclude)	FALTA	no se puede saltar node_modules, cache ni temporales
+funciones	cifrado	FALTA	restic y borg cifran POR DEFECTO; sin esto no se sube a la nube de nadie
+funciones	repositorio remoto (S3/SFTP)	FALTA	solo escribe en disco local
+funciones	barra de progreso	FALTA	un respaldo de 62 GB no da senales de vida durante horas
+funciones	reanudar una compresion cortada	FALTA	hay que empezar de cero
+robustez	dos 'add' a la vez	SIN BLOQUEO	sobrevivio en la prueba, pero no hay nada que lo impida. Es suerte
+robustez	Ctrl-C a mitad	INVESTIGAR	quedo un .vc que PASA verify; si esta incompleto es la trampa peor: parece bueno y no lo es
+robustez	disco lleno a mitad	SIN PROBAR	-
+robustez	fichero que cambia mientras se lee	SIN PROBAR	-
+ya esta	ida y vuelta blake3 por fichero	OK	-
+ya esta	instantaneas incrementales	OK	-
+ya esta	entrada por tuberia	OK	-
+ya esta	elegir ajuste por precio	OK	-
+ya esta	determinismo x86/ARM	OK	6/6 byte-identico
+ya esta	montar (FUSE)	OK	existe; sin medir a fondo
+ya esta	licencia AGPL + comercial	OK	-
+#
+# ORDEN DE ATAQUE PROPUESTO, por dano y por coste:
+#  1. Los cuatro de metadatos: son PERDIDA DE DATOS SILENCIOSA y comparten un mismo cambio de
+#     formato (el registro de fichero). Invalidan cualquier respaldo hecho hasta hoy.
+#  2. listar + extraer un fichero suelto: el indice YA tiene todo lo necesario (lista de trozos
+#     por fichero). Es barato y quita el defecto mas descalificante.
+#  3. bloqueo del archivo: barato, evita corrupcion.
+#  4. exclusiones y progreso: baratos, muy visibles para quien lo use.
+#  5. retencion (borrar instantanea): necesita compactar el archivo, es el mas caro de los medios.
+#  6. cifrado: el mayor, y sin el no hay nube.

@@ -1,0 +1,13 @@
+# EL GUARDIA DE MEMORIA (F2.62). Arbol de 401,8 MiB, 656 ficheros, --max (tramos de 32 MiB).
+# Lo que se comprueba no es que baje la RAM: es que el SHA no cambia. Un archivo no puede
+# depender de cuanta memoria tenia la maquina que lo escribio, o dejaria de ser reproducible.
+techo	hilos_efectivos	segundos	ram_mb	bytes	sha12
+por defecto (60% de la RAM real)	~11	418.19	11791	10452102	64b9cf476fa3
+VC_RAM_MB=4096	3	681.57	3783	10452102	64b9cf476fa3
+VC_RAM_MB=2048	1	1845.22	1594	10452102	64b9cf476fa3
+#
+# CALIBRACION DEL PROPIO GUARDIA, que sale de estas tres filas:
+#   RAM real ~= 574 MB fijos + 1020 MB por hilo.  El guardia supone 1152 MB por hilo y cero
+#   fijos. Sobreestima el coste por hilo (~13%) e ignora el fijo, asi que se pasa de prudente
+#   con pocos hilos y acierta con muchos. Se deja asi: equivocarse hacia abajo en el numero de
+#   hilos cuesta tiempo; equivocarse hacia arriba cuesta que el sistema mate el proceso.

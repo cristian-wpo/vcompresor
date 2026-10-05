@@ -1,0 +1,138 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""EL PLAN: como se resuelven los 29 hallazgos, en que orden y con que se comprueba cada uno.
+
+Encargo del dueño: «ya con las preguntas respondidas hay que resolverlo todo».
+
+EL PROBLEMA QUE HAY QUE RESOLVER ANTES DE TOCAR NADA. F4.1 acaba de medir el SUELO DE RUIDO del
+banco sobre el arbol completo: la MISMA configuracion repetida varia un 1,63% en ciclos. Y casi
+todos los hallazgos del censo valen menos que eso por separado. Si se arreglan y se miden con
+cronometro no se vera nada — o peor, se vera una fluctuacion de 1,5% y se llamara mejora.
+
+Asi que cada linea de este plan lleva EL INSTRUMENTO QUE PUEDE VERLA, y no todos son el reloj:
+
+    syscalls (strace)   un CONTEO. No tiene ruido, no depende de la carga, no hay que repetirlo.
+    bytes               deterministas al byte. Un cambio de ratio de 0,001% es visible y cierto.
+    fases (VC_FASES)    una fase de 20 s se mide mejor que un total de 300 s.
+    perf: instr/fallos  mucho menos ruidosos que los ciclos, porque no cuentan esperas.
+    el reloj            SOLO para lo que mueve mas del 1,63%. Son tres lineas de las veintinueve.
+
+EL SEGUNDO PROBLEMA, Y ES MAS SERIO. Los seis stat por fichero son feos, pero: 15 ms de CPU por
+fichero de media, y seis stat son ~12 microsegundos. Es el 0,08%. Arreglarlo por que se ve mal
+es ESTETICA, no ingenieria — y es exactamente el error que este censo denuncia, cometido del
+otro lado. Por eso el paso 2 no es arreglar: es MEDIR el coste por fichero EN FUNCION DEL
+TAMAÑO, que es el dato que decide si el gasto por fichero importa o no importa nada.
+
+EL ORDEN, entonces, no es por lo feo que es cada cosa: es por lo que se sabe de ella.
+"""
+import csv
+import collections
+
+# paso · que · por que AHORA · con que se comprueba · esfuerzo · estado
+P = [
+(0, "Revertir el defecto de agrupar",
+ "Es la unica decision de producto que hoy esta tomada sobre un numero falso. F4.1, con la "
+ "maquina quieta y dos repeticiones: agrupar cuesta 0,78% de ciclos, POR DEBAJO del suelo de "
+ "ruido de 1,63% —o sea, no medible— y compra 0,218% de bytes, que es exacto y determinista. "
+ "El 13,3% que publica el panel salio de comparar carga 54 contra carga 56.",
+ "bytes (exactos) + el suelo de ruido de F4.1", "minutos", "HOY"),
+
+(0, "Rehacer los veredictos con las parejas limpias",
+ "Dos de los cinco veredictos publicados salen de parejas incomparables. Ya esta el guion que "
+ "lo hace bien; falta correrlo con los datos de F4.1 y publicar.",
+ "el propio veredictos.py, que ahora rechaza lo que no es comparable", "minutos", "HOY"),
+
+(1, "Contar los syscalls con strace",
+ "Es la medida mas barata y mas dura que hay para P1 y P2: un conteo no tiene ruido, no depende "
+ "de la carga y no hay que repetirlo tres veces. Cierra de golpe dos preguntas y pone numero a "
+ "cuatro hallazgos.",
+ "strace -c -f — conteo exacto", "minutos", "HOY"),
+
+(2, "Coste por fichero EN FUNCION DEL TAMAÑO",
+ "ES EL PASO QUE DECIDE TODO LO DEMAS. Hoy se sabe que el arbol cuesta 15 ms de CPU por fichero "
+ "DE MEDIA, y que la mediana es de 1.972 B. Pero no se sabe lo que cuesta un fichero de 2 KB "
+ "contra uno de 2 MB. Sin ese dato, arreglar los seis stat es estetica: seis stat son ~12 us "
+ "de 15.000, el 0,08%. Con ese dato se sabe si el gasto POR FICHERO manda en el arbol real —y "
+ "entonces el paso 4 es lo mas rentable del proyecto— o si no importa nada.",
+ "arboles sinteticos de talla fija (2K, 16K, 128K, 1M, 8M), mismo numero de bytes, en serie",
+ "una tarde de maquina", "SIGUIENTE"),
+
+(3, "--price elige CARRILES, no el nivel de zstd",
+ "El arreglo mas rentable del censo y no esta cerca: el nivel mueve un 0,8% y los carriles van "
+ "de 0,15x a 5,92x de retorno segun lo que cueste el almacenamiento. Es ademas la decision que "
+ "el usuario NO sabe tomar solo, que es justo lo que un sondeo automatico debe resolver.",
+ "bytes (exactos) + los veredictos en euros, que ya existen", "dias", "PLANIFICADO"),
+
+(3, "Barrer CDC_MIN / CDC_AVG / CDC_MAX",
+ "La perilla que decide todo el dedup y no se ha tocado NUNCA: cero filas en el registro. Y el "
+ "88,3% de los ficheros del arbol esta por debajo de CDC_MIN, asi que para ellos el troceador "
+ "no rueda ni un byte. Puede que 64 KiB sea el numero correcto; hoy no se sabe.",
+ "bytes (exactos) sobre el corpus con duplicados + el reloj para el coste", "una tarde", "PLANIFICADO"),
+
+(3, "Tabla de 9 bits en vc-inflate",
+ "285 MB/s medidos contra ~1 GB/s de zlib. Huff::lee recorre longitudes 1..16 simbolo a simbolo "
+ "y los conteos canonicos YA estan calculados. Es el unico hallazgo del censo que mueve MUCHO "
+ "mas que el suelo de ruido, asi que se puede verificar con el reloj.",
+ "el banco de 1.973 flujos: MB/s y, sobre todo, 1.973/1.973 identicos", "un dia", "PLANIFICADO"),
+
+(4, "El bloque de arreglos mecanicos",
+ "Nueve hallazgos que son el mismo tipo de cosa y se arreglan juntos: seis stat a uno "
+ "(recorrer() devuelve el struct que ya pide), tres open a uno, lee_prefijo dimensionado al "
+ "fichero, lee_prefijo y lee_ventana fundidas, agrupar DESPUES de stat, reserva del indice, "
+ "len_plano a inflate, y la cita a f2.8-deps.tsv que apunta a un fichero que no existe. "
+ "Van en bloque porque por separado NINGUNO se ve: hay que medirlos como un solo cambio.",
+ "syscalls antes/despues (exacto) + el reloj SOLO sobre el bloque entero",
+ "un dia", "ESPERA AL PASO 2"),
+
+(5, "M1: que cuesta reiniciar el modelo en cada tramo",
+ "El desperdicio mas caro del proyecto y sigue sin medir. Con --max los tramos son de 32 MiB, "
+ "asi que sobre 2,6 GB el modelo aprende y OLVIDA ochenta veces. Un compresor de contextos "
+ "mejora cuanto mas ha visto: esto es ratio tirado, no solo tiempo.",
+ "bytes: la misma entrada como UN tramo contra N tramos. La diferencia es exacta.",
+ "horas de maquina", "PLANIFICADO"),
+
+(5, "M4 y M5: los pesos del mezclador y la perdida del codificador",
+ "Los dos instrumentos ya existen o son de cuatro lineas. M4 puede señalar modelos muertos que "
+ "cuestan su busqueda en tabla y no aportan; M5 dice cuanto se pierde entre la entropia del "
+ "mezclador y los bytes que salen —si es 0,1% no hay nada que hacer, si es 2% es lo mas barato "
+ "de recuperar del proyecto.",
+ "bytes y entropia acumulada: los dos exactos", "horas", "PLANIFICADO"),
+
+(6, "La huella gear como identificador de trozo",
+ "corte() calcula la huella de cada byte y la tira; luego blake3 vuelve a pasar. PERO la "
+ "condicion de corte fija sus bits bajos a cero, asi que es un identificador mas debil de lo "
+ "que parece. NO se toca hasta tener la prueba de colisiones.",
+ "contar colisiones de la huella de corte contra blake3 sobre el corpus", "horas", "NECESITA PRUEBA"),
+
+(6, "fuser y el cifrado tras una caracteristica apagada",
+ "13 crates por un mount de Linux y 33 por el cifrado, en el binario de TODO EL MUNDO. Es "
+ "decision del dueño porque cambia lo que trae el binario por defecto.",
+ "cargo tree: conteo exacto de crates, y el tamaño del binario", "horas", "DECISION DEL DUEÑO"),
+]
+
+with open("bench/plan.tsv", "w", newline="") as f:
+    f.write("# EL PLAN para resolver los 29 hallazgos del censo.\n")
+    f.write("# EL SUELO DE RUIDO DEL BANCO ES 1,63% (F4.1, misma config repetida). Casi todos los\n")
+    f.write("# arreglos valen menos que eso por separado, asi que cada linea lleva EL INSTRUMENTO\n")
+    f.write("# QUE PUEDE VERLA — y solo tres de las doce se pueden comprobar con el reloj.\n")
+    f.write("# El orden NO es por lo feo que es cada cosa: es por lo que se sabe de ella.\n")
+    f.write("# Lo escribe bench/plan.py.\n")
+    w = csv.writer(f, delimiter="\t")
+    w.writerow(["paso", "que", "por_que_ahora", "con_que_se_comprueba", "esfuerzo", "estado"])
+    for r in P:
+        w.writerow(r)
+
+print(f"bench/plan.tsv: {len(P)} pasos\n")
+ult = None
+for r in P:
+    if r[0] != ult:
+        print(f"\n  ── paso {r[0]} " + "─" * 60)
+        ult = r[0]
+    print(f"  [{r[5]:<16}] {r[1]}")
+    print(f"  {'':18}  se comprueba con: {r[3]}")
+print()
+c = collections.Counter(r[5] for r in P)
+print("  " + " · ".join(f"{k}: {v}" for k, v in c.most_common()))
+print()
+print("  Tres de las doce se pueden comprobar con el reloj. Las otras nueve, no:")
+print("  hay que contarlas, no cronometrarlas.")

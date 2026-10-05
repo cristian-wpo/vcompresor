@@ -1,0 +1,7 @@
+# EN QUE VERSION ESTAMOS. Cada valor LEIDO DEL FUENTE por bench/aplicado.py.
+# Ni uno escrito a mano: si un ancla no aparece, el generador ABORTA.
+que	valor	de_donde	por_que_importa
+modelo de vc-cm	10	crates/vc-cm/src/lib.rs	la version con la que se ESCRIBE por defecto. Sube cada vez que cambia algo que altere UNA SOLA prediccion, y viaja dentro del flujo: un archivo se abre con el modelo de su epoca.
+modelos que sabemos abrir	1, 2, 3, 4, 5, 6, 7, 8, 9, 10	crates/vc-cm/src/lib.rs	la lista se DERIVA de MODELO_MAX (1..=MODELO_MAX) para que no pueda desincronizarse del reparto de descomprimir. Quitar uno es romper archivos: solo tras ventana de obsolescencia.
+frame por defecto (MiB)	64	crates/vc-cli/src/main.rs	64 y no 128 porque esta medido: 128 y 256 MiB dan MAS bytes y hasta 1,48x el RSS.
+version del paquete	0.1.0	Cargo.toml	la del workspace; todos los crates la heredan.

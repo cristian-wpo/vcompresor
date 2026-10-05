@@ -1,0 +1,4 @@
+herramienta	bytes	pct_original
+zstd -19	-	65.440
+zpaq -m5	79761241	38.165
+vcompresor --max	76546740	36.627

@@ -1,0 +1,13 @@
+# COMPILAR PARA LA MAQUINA QUE EXISTE, NO PARA UNA DE 2003.
+#
+# Sin este fichero el binario sale para x86-64 BASELINE: fuera de los bloques
+# #[target_feature] no hay ni AVX2, ni BMI2, ni FMA. El codec es aritmetica
+# entera pura, asi que la salida NO cambia -eso es un control, no una promesa:
+# se comprueba con sha256 en cada tanda-.
+#
+# Por que x86-64-v3 y no znver2/native: v3 = AVX2 + BMI2 + FMA + MOVBE + LZCNT,
+# que es Intel Haswell (2013) y AMD Zen (2017) en adelante. Cubre practicamente
+# todo lo que hay desplegado y el binario SIGUE SIENDO PORTABLE. znver2 ata el
+# binario a esta maquina y eso es un fallo de producto, no un detalle.
+[build]
+rustflags = ["-C", "target-cpu=x86-64-v3"]

@@ -1,0 +1,5 @@
+# bits por byte del codec vc-cm sobre muestras de 10 MB (menor = mejor)
+muestra	manana_27-07	F2.13_ISSE	F2.16	F2.21	zpaq_-m5
+codigo.10m	0.840	0.7263	0.6675	0.6554	0.663
+enwik8.10m	1.918	1.8059	1.7371	1.7064	1.669
+csvjson.10m	0.633	0.5774	0.4855	0.4556	0.509

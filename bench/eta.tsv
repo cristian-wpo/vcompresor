@@ -1,0 +1,20 @@
+# EL TIEMPO QUE FALTA: OCHO ESTIMADORES SOBRE LAS MISMAS TRAZAS.
+# GENERADO POR bench/banco-eta.py --tsv — NO SE EDITA A MANO.
+#
+# Se captura la traza de avance UNA vez por arbol y se pasa por todos los
+# estimadores, para que todos vean exactamente los mismos datos: cinco corridas
+# distintas no son comparables entre si porque la maquina no repite.
+#
+# `error` es la MEDIANA del error absoluto contra el tiempo que de verdad faltaba.
+# `habla` es en que porcentaje de las lineas se atreve a decir un numero: un
+# estimador que calla no se equivoca, y tampoco sirve.
+# Manda `peor`, no la media de las columnas: el usuario no elige que carpeta guarda.
+estimador	error_mixto-fotos	habla_mixto-fotos	error_video-png	habla_video-png	peor
+ritmo medio	46%	99%	50%	98%	50%
+por el porcentaje	48%	99%	50%	98%	50%
+ventana 60 s	50%	99%	43%	98%	50%
+media amortiguada	46%	99%	50%	98%	50%
+media + exponencial	60%	94%	44%	91%	60%
+ventana 30 s	64%	99%	52%	98%	64%
+pesimista (peor ritmo)	75%	99%	67%	98%	75%
+media exponencial (el viejo)	85%	94%	48%	91%	85%

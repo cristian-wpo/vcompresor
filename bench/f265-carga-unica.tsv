@@ -1,0 +1,20 @@
+# F2.65 — la carga util de la transformada se escribe UNA VEZ (etiqueta 7 = referencia atras).
+# Misma bateria que la linea base. Tamaño en bytes; "+inst" = lo que crece el archivo al añadir
+# una instantanea del MISMO arbol, sin cambiar un byte.
+corpus	tam_antes	tam_ahora	inst_antes	inst_ahora	factor	rt_3_instant	rt_archivo_viejo
+pdfoffice	77091115	77089373	8664994	2497	3470x	0 dif	0 dif
+png-fireworks	25455219	25454937	14441264	6053	2385x	0 dif	0 dif
+png-normal	153142420	153142139	1813	4874	-	0 dif	0 dif
+# fuzz: 12.000 ficheros byte-identicos, no-expansion violada 0 veces.
+#
+# A/B sobre EL MISMO arbol aplanado, para descartar que el cambio tocara el tamaño:
+#   binario   archivo      +inst.1  +inst.2
+#   viejo     153142420       1813     1929
+#   nuevo     153142139       4893     1005
+# 281 bytes MENOS. La primera verificacion dio +1,08% en png-normal y era artefacto de la
+# medida: la linea base uso el directorio original y la verificacion una copia aplanada con los
+# ficheros renombrados, lo que cambia el orden de agrupacion por parecido y por tanto los frames.
+#
+# DONDE NO SIRVE: en png-normal la carga por instantanea ya eran 2 KB. No hay nada que ganar y
+# las dos primeras copias suman 3 KB mas, sobre 153 MB: 0,002%. HIPOTESIS SIN VERIFICAR de por
+# que zstd ya dedupicaba solo ahi: su ventana son 8 MiB y el indice de pdfoffice la desborda.

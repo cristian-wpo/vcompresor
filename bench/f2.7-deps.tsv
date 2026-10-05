@@ -1,0 +1,123 @@
+# F2.7 recorte de dependencias + F2.8 hito 1 del JPEG propio. 2026-07-27, Ryzen 5 3600.
+#
+# arbol de crates (transitivo, -e normal)
+hito	crates
+antes	60
+sin clap	47
+sin fastcdc/walkdir/filetime	43
+sin serde/bincode/flate2	33
+#
+# CDC propio vs fastcdc — corpus dup, 377.165.690 B, 2124 ficheros
+troceador	ratio_pct	tiempo_s
+fastcdc (v0, 25-07)	25.95	33.0
+cdc.rs propio	22.97	18.7
+#
+# indice propio vs bincode — mismo arbol (1200 jpg + 800 codigo)
+serializacion	bytes_archivo
+bincode	96991227
+formato.rs propio	96992182
+#
+# extraccion: un hilo -> tramos contiguos en paralelo
+version	mb_s
+secuencial	6.4
+paralela	36.0
+#
+# F2.8 hito 1: parseo -> re-emision byte a byte, 10642 JPEG reales
+resultado	ficheros	pct
+byte-identicos	2329	21.88
+rechazados a store	8313	78.12
+DIVERGEN	0	0.00
+ # (version solo-secuencial) motivos: progresivo 8255 | no empieza por SOI 58
+# velocidad del parser: 58.5 MB/s con 8 hilos (ida y vuelta) vs 6.4 MB/s del carril libjxl
+
+# F2.8 CON PROGRESIVO (SOF2) — mismos 10642 ficheros
+resultado	ficheros	pct
+byte-identicos	10583	99.45
+rechazados a store	59	0.55
+DIVERGEN	0	0.00
+# de los 59 rechazos, 58 son PNG con extension .jpg (firma 8950) -> de 10584 JPEG reales, 10583 = 99,99%
+# velocidad con progresivo: 28.0 MB/s con 8 hilos (ida y vuelta) vs 6.4 MB/s del carril libjxl
+
+# F2.9 carril DEFLATE ampliado (gzip + png + zip/docx/xlsx/pptx/jar/apk/epub)
+corpus	ficheros	tar_bytes	zstd19_pct	vcompresor_pct	roundtrip
+png	1749	286627840	85.80	44.78	OK 1749/1749
+pdfoffice	271	209664000	65.44	39.15	OK 271/271
+# PNG: 238,7 MiB de DEFLATE -> 3.604,5 MiB de plano con 5,3 MiB de correcciones
+# velocidad: png 1.8 MB/s comprimir / 34.3 descomprimir | office 10.0 / 307.4
+
+# F2.10 agrupado por similitud (union-find sobre minhash, refuerza el orden por ruta)
+corpus	base_pct	agrupado_pct	ganancia_pct
+codigo	11.994	11.081	+7.61
+sql	9.100	9.056	+0.48
+logs	2.717	2.709	+0.28
+csvjson	2.736	2.742	-0.21
+dup	22.668	22.668	0.00
+# ordenar DIRECTAMENTE por la firma empeora: codigo -7.7, logs -13.5, csvjson -9.0
+#
+# F2.10 CONTRA LOS RIVALES REALES — corpus codigo, 136.415.253 B en 27.162 ficheros
+herramienta	bytes	pct	segundos
+zpaq -m5	10901842	7.99	182
+7z -mx9	12920611	9.47	39
+xz -9	13416612	9.84	50
+mkdwarfs -l9	13428952	9.84	29
+zstd -19 --long=31	14028962	10.28	55
+vcompresor	15115500	11.08	11
+# ultimos en ratio, primeros en velocidad (3x a 16x)
+#
+# de donde sale el hueco: tamano de frame del carril texto
+frame_mib	bytes
+8	15115500
+32	14255497
+128	14169816
+# la independencia de frames cuesta ~6% (precio del acceso aleatorio); el resto es el
+# codificador de entropia: zstd-19 contra LZMA y mezcla de contextos.
+
+# F2.11 vc-cm enchufado como codec 2 del carril texto (--max). Corpus codigo 136.415.253 B.
+configuracion	bytes	pct
+zstd frame 8MiB (defecto)	15115500	11.08
+zstd frame 128MiB	14169816	10.39
+vc-cm frame 8MiB	14544639	10.66
+vc-cm frame 128MiB	14410504	10.56
+zpaq -m5 (la vara)	10901842	7.99
+# nuestro CM le gana a zstd un 3,8%; el tamano de frame casi no importa con CM (0,9%);
+# y aun asi zpaq nos saca un 32% -> el hueco es LA FUERZA DEL MODELO, no la arquitectura.
+# extraccion con cache de frames COMPARTIDA entre hilos: 160,7s -> 84,3s
+
+# F2.12 ICM (historia de bits) en vc-cm. bpb, menor = mejor.
+muestra	antes	con_ICM	zpaq_m5
+codigo.10m	0.840	0.7443	0.663
+enwik8.10m	1.918	1.8261	1.669
+csvjson.10m	0.633	0.5947	0.509
+# hueco con zpaq en codigo: 26,7% -> 12,3% (a la mitad)
+#
+# ARCHIVADOR, corpus codigo 136.415.253 B — ranking actualizado
+herramienta	bytes	pct	segundos
+zpaq -m5	10901842	7.99	182
+7z -mx9	12920611	9.47	39
+vcompresor --max (ICM)	13055669	9.57	41
+xz -9	13416612	9.84	50
+mkdwarfs -l9	13428952	9.84	29
+zstd -19 --long=31	14028962	10.28	55
+vcompresor por defecto	15115500	11.08	11
+# eramos los ULTIMOS, ahora TERCEROS: por delante de xz y DwarFS, a un 1% de 7z en su tiempo
+
+# F2.13 ISSE (cadena: ICM orden1 -> ISSE 2,3,4,6,palabra). bpb, menor = mejor.
+muestra	base	ICM	ICM+ISSE	zpaq_m5
+codigo.10m	0.840	0.7443	0.7263	0.663
+enwik8.10m	1.918	1.8261	1.8059	1.669
+csvjson.10m	0.633	0.5947	0.5774	0.509
+#
+# ARCHIVADOR, corpus codigo 136.415.253 B — SEGUNDOS, por delante de 7z
+herramienta	bytes	pct	segundos
+zpaq -m5	10901842	7.99	182
+vcompresor --max (ICM+ISSE)	12797262	9.38	84
+7z -mx9	12920611	9.47	39
+xz -9	13416612	9.84	50
+mkdwarfs -l9	13428952	9.84	29
+zstd -19 --long=31	14028962	10.28	55
+# hueco con zpaq: 38,7% -> 17,4% en un dia. Partida de hoy: 15.115.500 -> 12.797.262 (-15,3%)
+#
+# NEGATIVOS (probados y descartados, para no repetirlos):
+# - 13 entradas al mezclador (todas las etapas): 0.7349 PEOR. El mezclador es el cuello.
+# - match model con StateMap aprendido: 0.7432 PEOR que la formula lineal.
+# - segunda etapa SSE/APM: 0.7358-0.7432 PEOR. Sobre-suaviza.

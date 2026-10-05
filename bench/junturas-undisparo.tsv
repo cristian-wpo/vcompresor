@@ -1,0 +1,8 @@
+# LLAMADAS DE UN DISPARO A LIBRERIAS DE FUERA — informacion nuestra que no cruza.
+# Detectadas recorriendo el codigo, no escritas a mano. Esto habria cazado el fallo
+# de la ventana: zstd::bulk::compress(datos, nivel) y ni un parametro mas.
+llamada	que_se_traga	la_version_que_si_acepta	sitios	donde
+zstd::bulk::compress(	nivel y nada mas: ventana, LDM, estrategia y hash van por defecto	zstd::bulk::Compressor + set_parameter	2	crates/vc-core/src/bin/vc-rechazados.rs:38 crates/vc-core/src/bin/vc-zstd-perfil.rs:62
+zstd::bulk::decompress(	el tope de ventana del descompresor	zstd::bulk::Decompressor + set_parameter	2	crates/vc-core/src/lib.rs:2879 crates/vc-core/src/lib.rs:2914
+blake3::hash(	nada configurable, pero SI recalcula si ya se hasheo antes	reutilizar el hash que ya tiene el troceador	8	crates/vc-core/src/cdc.rs:118 crates/vc-core/src/formato.rs:125 crates/vc-core/src/lib.rs:386 crates/vc-core/src/lib.rs:483 crates/vc-core/src/lib.rs:1512 crates/vc-core/src/lib.rs:2534 crates/vc-core/src/lib.rs:2827 crates/vc-core/src/lib.rs:2882
+std::fs::read(	lee el fichero ENTERO otra vez, aunque ya se leyera para firmarlo	pasar el buffer que ya se leyo	22	crates/vc-core/src/cripto.rs:121 crates/vc-core/src/lib.rs:872 crates/vc-core/src/lib.rs:1339 crates/vc-core/src/lib.rs:1491 crates/vc-core/src/lib.rs:1501 crates/vc-core/src/lib.rs:2409 crates/vc-core/src/lib.rs:2422 crates/vc-core/src/lib.rs:2437

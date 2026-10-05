@@ -1,0 +1,40 @@
+# LA PIRAMIDE DE vc-cm, nuestra alternativa a zstd-19.
+# El bucle caliente va POR BIT: un cronometro por fase costaria mas que lo medido y
+# cambiaria el resultado. Para un bucle asi el instrumento correcto es el MUESTREO
+# (perf), que no toca el codigo. A cambio da porcentajes y no segundos, y se dice.
+# CADA FILA LLEVA SU FUENTE porque no todas vienen del mismo sitio, y mezclarlas sin
+# decirlo seria justo lo que este proyecto lleva el dia desmontando.
+# Lo escribe bench/piramide-vccm.py.
+nivel	id	padre	nombre	pct_tiempo	fuente	nota	extra
+0	vccm		vc-cm — nuestro codec de mezcla de contextos	100.0	—	1.985 lineas nuestras contra las 58.395 de C de zstd. Comprime MAS que zstd-19 y va a ~1 MB/s. El perfil cubre el 89.1% del tiempo; el resto se reparte por debajo del umbral del muestreo.	
+1	contextos	vccm	Preparar	2.6	perf record	Antes de predecir nada hay que saber con que clave busca cada modelo.	
+2	contextos:set_byte_contexts	contextos	set_byte_contexts	2.6	perf record	Calcula los contextos del byte: las claves con las que cada modelo va a buscar.	
+1	predecir	vccm	Predecir	43.1	perf record	La parte cara: N modelos, cada uno con una busqueda en tabla que casi siempre falla la cache.	
+2	predecir:Predictor::p	predecir	Predictor::p	40.1	perf record	Cada modelo mira su cubo y dice que probabilidad le da al siguiente bit.	
+2	predecir:busca_cubo	predecir	busca_cubo	3.0	perf record	Busca en la tabla el cubo que corresponde al contexto.	
+1	mezclar	vccm	Mezclar	2.8	perf record	Combinar las N opiniones en una. Es barato: el coste esta en producirlas.	
+2	mezclar:punto_avx2	mezclar	punto_avx2	2.8	perf record	El mezclador: producto escalar de las opiniones por sus pesos, en SIMD.	
+1	actualizar	vccm	Actualizar	40.6	perf record	Todo lo anterior otra vez, al reves, para aprender del bit que acaba de salir.	
+2	actualizar:Predictor::update	actualizar	Predictor::update	26.6	perf record	Con el bit ya conocido, cada modelo corrige su cuenta.	
+2	actualizar:fija_cubos	actualizar	fija_cubos	11.3	perf record	Escribe de vuelta el cubo en la tabla.	
+2	actualizar:actualiza_avx2	actualizar	actualiza_avx2	2.7	perf record	Corrige los pesos del mezclador segun el error, en SIMD.	
+1	memoria	vccm	Las tablas de los modelos — 484 MiB		bench/censo.tsv	34 modelos. Aqui no se mide tiempo sino MEMORIA, y es la causa del tiempo: cada prediccion es una busqueda en 484 MiB que casi siempre falla la cache. Por eso «predecir» es la etapa cara y no «mezclar».	
+2	mem:palabra	memoria	palabra		bench/censo.tsv	32.0 MiB · 48873 de 2097152 ranuras usadas (2.3%) · el solo comprimiria a 1.9992 bits por byte  ← ocupa memoria y casi no la usa	
+2	mem:indirecto-1	memoria	indirecto-1		bench/censo.tsv	32.0 MiB · 406648 de 2097152 ranuras usadas (19.4%) · el solo comprimiria a 1.8685 bits por byte	
+2	mem:encima x col	memoria	encima x col		bench/censo.tsv	32.0 MiB · 98611 de 2097152 ranuras usadas (4.7%) · el solo comprimiria a 3.1112 bits por byte  ← ocupa memoria y casi no la usa	
+2	mem:pareja-palabra	memoria	pareja-palabra		bench/censo.tsv	32.0 MiB · 232320 de 2097152 ranuras usadas (11.1%) · el solo comprimiria a 1.5248 bits por byte  ← ocupa memoria y casi no la usa	
+2	mem:pareja-minus	memoria	pareja-minus		bench/censo.tsv	32.0 MiB · 86870 de 2097152 ranuras usadas (4.1%) · el solo comprimiria a 2.4050 bits por byte  ← ocupa memoria y casi no la usa	
+2	mem:encima2 x col2	memoria	encima2 x col2		bench/censo.tsv	32.0 MiB · 27470 de 2097152 ranuras usadas (1.3%) · el solo comprimiria a 2.4475 bits por byte  ← ocupa memoria y casi no la usa	
+2	mem:forma-texto	memoria	forma-texto		bench/censo.tsv	32.0 MiB · 5561 de 2097152 ranuras usadas (0.3%) · el solo comprimiria a 1.9171 bits por byte  ← ocupa memoria y casi no la usa	
+2	mem:forma-texto-larga	memoria	forma-texto-larga		bench/censo.tsv	32.0 MiB · 20543 de 2097152 ranuras usadas (1.0%) · el solo comprimiria a 1.6964 bits por byte  ← ocupa memoria y casi no la usa	
+2	mem:indirecto-2	memoria	indirecto-2		bench/censo.tsv	32.0 MiB · 586843 de 2097152 ranuras usadas (28.0%) · el solo comprimiria a 1.8974 bits por byte	
+2	mem:txt:trigrama	memoria	txt:trigrama		bench/censo.tsv	32.0 MiB · 409989 de 2097152 ranuras usadas (19.5%) · el solo comprimiria a 1.4293 bits por byte	
+1	grupos	vccm	Los grupos de modelos — que aporta y que cuesta cada uno		bench/ablacion.tsv	Se apaga el grupo entero y se mide. «aporta» = cuanto EMPEORA el archivo al quitarlo; «cuesta» = cuanto tiempo se ahorra. Un grupo que aporta poco y cuesta mucho es candidato a irse.	
+2	g:coincidencias	grupos	coincidencias		bench/ablacion.tsv	aporta +6.18% de ratio · cuesta -3% de tiempo — imprescindible	
+2	g:forma	grupos	forma		bench/ablacion.tsv	aporta +4.34% de ratio · cuesta -1% de tiempo — imprescindible	
+2	g:indirectos	grupos	indirectos		bench/ablacion.tsv	aporta +1.51% de ratio · cuesta -6% de tiempo — se queda	
+2	g:fila	grupos	fila		bench/ablacion.tsv	aporta +1.28% de ratio · cuesta -14% de tiempo — se queda	
+2	g:palabra	grupos	palabra		bench/ablacion.tsv	aporta +1.21% de ratio · cuesta -3% de tiempo — se queda	
+2	g:dmc	grupos	dmc		bench/ablacion.tsv	aporta +1.00% de ratio · cuesta -4% de tiempo — se queda	
+2	g:ordenes	grupos	ordenes		bench/ablacion.tsv	aporta +0.27% de ratio · cuesta -14% de tiempo — MAL NEGOCIO: aporta poco y cuesta mucho	
+2	g:sparse	grupos	sparse		bench/ablacion.tsv	aporta -0.34% de ratio · cuesta -5% de tiempo — ESTORBA: quitarlo MEJORA el archivo	

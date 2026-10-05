@@ -1,0 +1,30 @@
+# B13 · A DONDE SE VAN LOS SEGUNDOS-CPU DE COMPRIMIR EL ARBOL REAL.
+# Lo escribe /tmp/preparado/B13.sh. Las filas de FASE son MEDIDA DIRECTA (VC_FASES,
+# un cronometro dentro del programa, una sola pasada). Las de CARRIL salen de la
+# ablacion: sus BYTES son exactos (deterministas) y sus CICLOS son una RESTA — y una
+# resta de dos totales solo vale si supera el suelo de ruido, que va en la cabecera.
+# commit 59669f1 · host vertice · carga 2.69 · nivel 19 (el defecto)
+# total: 2620837053 B en 282.1 s de reloj y 1309.1 s-CPU (5077.0 G ciclos, IPC 1.715)
+# suelo de ruido (dos «completo» de la misma tanda): 1.54% en ciclos
+# ⚠️ «transformar» aun no se desmenuza: preflate/E8E9/log-ts comparten el contador
+#    F_TRANSF. ⚠️ «jxl» no incluye mete_jxl (lib.rs:2488, sin cronometro).
+tipo	nombre	seg	pct	veces	us_por_vez	bytes_out	compra_pct	ciclos_G	como_se_midio
+fase	recorrer	0.41	0.0	1	405172.8				DIRECTO (VC_FASES)
+fase	agrupar	1.05	0.1	1	1046873.1				DIRECTO (VC_FASES)
+fase	stat	0.14	0.0	43298	3.2				DIRECTO (VC_FASES)
+fase	enrutar	0.27	0.0	41562	6.5				DIRECTO (VC_FASES)
+fase	jxl	60.88	5.0	11581	5256.8				DIRECTO (VC_FASES)
+fase	transformar	121.65	10.0	3706	32825.4				DIRECTO (VC_FASES)
+fase	leer+trocear	1.75	0.1	60289	29.1				DIRECTO (VC_FASES)
+fase	hash	3.17	0.3	186381	17.0				DIRECTO (VC_FASES)
+fase	dedup+copiar	3.27	0.3	93872	34.8				DIRECTO (VC_FASES)
+fase	esperar	39.56	3.3	97	407848.5				DIRECTO (VC_FASES)
+fase	meta+xattr	0.18	0.0	59640	2.9				DIRECTO (VC_FASES)
+fase	comprimir	861.31	70.9	97	8879529.3				DIRECTO (VC_FASES)
+fase	escribir	0.00	0.0	0	0.0				DIRECTO (VC_FASES)
+fase	cerrar	0.00	0.0	0	0.0				DIRECTO (VC_FASES)
+carril	preflate					1063527334	11.921	2402.7	bytes EXACTOS / ciclos POR RESTA
+carril	e8e9					951652880	0.148	5041.0	bytes EXACTOS / ciclos POR RESTA
+carril	logts					950530714	0.030	5113.1	bytes EXACTOS / ciclos POR RESTA
+carril	jxl					988419747	4.017	4224.9	bytes EXACTOS / ciclos POR RESTA
+carril	agrupar					950245382	0.000	5184.3	bytes EXACTOS / ciclos POR RESTA

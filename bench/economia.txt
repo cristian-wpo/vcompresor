@@ -1,0 +1,82 @@
+================================================================================================
+POR CADA TERABYTE DE DATO ORIGINAL QUE ENTRA
+================================================================================================
+herramienta                   guarda    ratio    CPU h    CPU €   (AX41 a 0.0639 €/h)
+restic --compression max       77.4G   7.741%      1.6     0.10
+borg -C zstd,22                64.9G   6.494%    189.2    12.09
+vcompresor por defecto         50.6G   5.060%     17.8     1.14
+vcompresor --max               25.6G   2.563%    264.9    16.92
+
+================================================================================================
+A: EL ALMUERZO GRATIS — nuestro modo POR DEFECTO contra borg a su maximo
+================================================================================================
+  Es el unico cruce donde ganamos en LAS DOS cosas a la vez: menos bytes Y menos CPU.
+  No hay nada que amortizar: es positivo desde el primer terabyte.
+  guarda        64.9 GB  ->  50.6 GB     = 14.3 GB menos (22.1%)
+  CPU           189.2 h   ->  17.8 h      = 171.4 h menos (10.6x mas rapido)
+  CPU en €      12.09 €  ->  1.14 €     = 10.95 € menos, UNA vez
+
+  precio                        €/TB-mes ahorrados      €/PB-AÑO  + CPU €/PB una vez
+  S3 Standard eu-central-1                   0.305         3,666              10,953
+  Backblaze B2 / Wasabi                      0.080           955              10,953
+  bulk europeo (Storage Box)                 0.036           430              10,953
+  disco propio amortizado                    0.017           207              10,953
+
+================================================================================================
+B: COMPRAR ESPACIO CON CPU — nuestro --max contra restic (el que usa todo el mundo)
+================================================================================================
+  Aqui SI hay que decidir: 3,02x menos bytes, pero 161x mas CPU. La pregunta correcta no
+  es cual comprime mas, es cuantos meses tiene que quedarse el dato guardado para que el
+  ahorro de disco pague la CPU que costo comprimirlo.
+  guarda        77.4 GB  ->  25.6 GB     = 51.8 GB menos (66.9%, 3.02x)
+  CPU           1.6 h   ->  264.9 h     = 263.3 h MAS = 16.82 € mas, una vez
+
+  precio                        €/TB-mes ahorr.   se paga sola en   €/PB-AÑO netos*
+  S3 Standard eu-central-1                1.103           15.3 m            -3,585
+  Backblaze B2 / Wasabi                   0.287           58.5 m           -13,371  <-- NO compensa
+  bulk europeo (Storage Box)              0.129          129.9 m           -15,266  <-- NO compensa
+  disco propio amortizado                 0.062          270.7 m           -16,074  <-- NO compensa
+  * neto = 12 meses de ahorro de disco MENOS la CPU, para 1 PB ingerido y retenido 1 año.
+
+================================================================================================
+C: EL CASO REALISTA — un proveedor con 1 PB de dato de cliente, retencion de 1 año
+================================================================================================
+  Un respaldo no es una foto: es una base + un cambio diario. Con 3% de rotacion diaria y
+  365 dias de retencion, lo que se acaba guardando es ~1 + 0,03*365 = 11,95 veces la base.
+  Nuestra ventaja se aplica IGUAL a la base y a los deltas (F2.61: 0 trozos nuevos sobre
+  dato que no cambio), asi que el multiplicador no la diluye — se multiplica por el.
+  fuente 1000 TB · rotacion 3%/dia · retencion 365 d  =>  x11.95 de dato efectivo
+
+                              TB guardados      S3 €/año     B2 €/año  bulk €/año  propio €/año
+  restic --compression max             925       236,455       61,611       27,753       13,321
+  borg -C zstd,22                      776       198,346       51,682       23,280       11,174
+  vcompresor por defecto               605       154,540       40,267       18,138        8,706
+  vcompresor --max                     306        78,295       20,401        9,190        4,411
+
+  AHORRO ANUAL de sustituir restic por nosotros (misma fuente, mismo dato guardado):
+  precio                             con --max   con por defecto   CPU extra/año --max
+  S3 Standard eu-central-1             158,160            81,915              -200,998
+  Backblaze B2 / Wasabi                 41,211            21,344              -200,998
+  bulk europeo (Storage Box)            18,563             9,614              -200,998
+  disco propio amortizado                8,910             4,615              -200,998
+
+================================================================================================
+D: DONDE ESTO NO VALE — el limite honesto
+================================================================================================
+  El arbol medido es codigo, SQL, logs, documentos y algo de imagen. Una empresa de
+  respaldo real guarda ademas video, fotos JPEG, imagenes de maquina virtual y volumenes
+  YA cifrados. Sobre dato ya comprimido o cifrado NO hay 3x: no hay redundancia que
+  explotar, el ratio se va a ~1 para todos, y nosotros ademas perdemos por la CPU.
+
+  Por eso la cifra de arriba hay que aplicarla SOLO a la parte comprimible de la mezcla:
+  mezcla del cliente                        % comprimible   ahorro real vs restic
+  servidores/ERP/BBDD/correo (nuestro caso)            90%                   60.2%
+  puesto de oficina tipico                            55%                   36.8%
+  hosting con muchos medios                           30%                   20.1%
+  archivo de video / VM cifradas                       5%                    3.3%
+
+  Y una que NO esta medida y podria mover esto: el troceado. restic y borg trocean por
+  contenido igual que nosotros, pero con otros tamanos. Si el nuestro es mas grueso,
+  guardariamos mas delta por cambio y la ventaja se estrecharia en el dia a dia. Medirlo
+  exige un arbol con rotacion real, no un arbol copiado: pendiente.
+================================================================================================

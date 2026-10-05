@@ -1,0 +1,46 @@
+# EL JUEGO CANONICO DE MUESTRAS. Una fila por muestra, agrupadas en JUEGOS.
+#
+# 🚨 18-08: EL CORPUS YA NO VIVE EN /tmp, Y LA RAZON ES QUE ALLI SE PERDIO UNA MUESTRA.
+# `csvjson.10m` desaparecio con un reinicio y no hay generador que la reconstruya, asi que todo
+# lo medido contra ella dejo de poder repetirse. Las otras siete seguian en /tmp esperando su
+# turno. Ahora estan en ~/vcompresor-corpus con su sha256 anotado, y `bench/corpus.sh` lo
+# verifica y FALLA (rc=1) si falta una o si cambia: una tanda contra un corpus incompleto no es
+# una tanda incompleta, es una tanda que compara cosas distintas.
+#
+# POR QUE EXISTE. El 03-08 se cerraron DOS racimos sobre 4 de las 5 muestras de texto -falta
+# enwik8 en los dos- y uno de ellos se APLICO POR DEFECTO. Nadie lo vio, y no por descuido: el
+# juego de cinco no estaba declarado en ningun sitio. Los ficheros estaban en disco y el juego
+# estaba en la cabeza. Un veredicto sobre un racimo incompleto no es un veredicto, es una muestra
+# de conveniencia -y la que falta suele ser justo la que no gusta.
+#
+# LO CONSUME bench/decide.py, que marca INCOMPLETA toda decision a la que le falte una muestra de
+# su juego, y bench/mide.sh, que avisa si se mide algo que no esta declarado aqui. Anadir una
+# fila es declarar que esa muestra forma parte del juego: desde ese momento, toda decision que
+# cite el juego tiene que medirla o sale en rojo.
+#
+# `bytes` es el tamano de la ENTRADA, y no es decoracion: el panel ya compara `bytes_in` con un
+# 2% de holgura para cazar una muestra cambiada bajo el mismo nombre (`otra_entrada` en
+# panel.py). Esta columna es el ancla de esa comprobacion y el sitio donde se ve si una muestra
+# se movio debajo de los pies.
+#
+# COMO SE REPRODUCE: los cinco de texto salen de bench/trae-muestras.sh; los tres de no-texto de
+# /tmp/nt; el arbol y el banco de DEFLATE son los corpus fijos del servidor.
+juego	muestra	fichero	bytes	para_que
+texto5	codigo.10m	~/vcompresor-corpus/texto5/codigo.10m	10485760	fuente: el caso del producto, y donde primero se ve moverse el CM. RESCATADA de /tmp el 18-08
+texto5	csvjson.10m	PERDIDA — vivia en /tmp/compresor-f1/samples/ y un reinicio se la llevo	10485760	estructurado por separadores. NO HAY GENERADOR que la reconstruya: toda medida historica contra ella queda sin poder repetirse. Su sustituta declarada aparte es csvjson-r.10m, en el juego texto5r
+texto5	enwik8.10m	~/vcompresor-corpus/texto5/enwik8.10m	10485760	prosa: el unico que castiga de verdad los ordenes altos, y el que faltaba en los dos racimos mal cerrados. RESCATADA de /tmp el 18-08
+texto5	logs.10m	~/vcompresor-corpus/texto5/logs.10m	10485760	repetitivo extremo: aqui manda el match y el CM casi no pinta. RESCATADA de /tmp el 18-08 (estaba en /tmp/x5, fuera de su ruta declarada)
+texto5	sql.10m	~/vcompresor-corpus/texto5/sql.10m	10485760	mixto texto y numeros: respaldos de base de datos. RESCATADA de /tmp el 18-08
+texto5r	codigo.10m	~/vcompresor-corpus/texto5/codigo.10m	10485760	la misma historica
+texto5r	csvjson-r.10m	~/vcompresor-corpus/texto5/csvjson-r.10m	10485760	RECONSTRUIDA el 17-08 y declarada aparte: NO es la csvjson.10m historica y no se la hace pasar por ella. Misma clase de dato, armada con el metodo repartido de la casa (ver docs/f6-salto-de-match.md §2)
+texto5r	enwik8.10m	~/vcompresor-corpus/texto5/enwik8.10m	10485760	la misma historica
+texto5r	logs.10m	~/vcompresor-corpus/texto5/logs.10m	10485760	la misma historica
+texto5r	sql.10m	~/vcompresor-corpus/texto5/sql.10m	10485760	la misma historica
+no-texto3	nt-bin	/tmp/nt/bin.8m	5313968	binario ya denso: donde los ordenes clasicos SI hacen falta
+no-texto3	nt-pdf	/tmp/nt/pdf.8m	961642	contenedor con flujos DEFLATE dentro, que es el carril de vdeflate
+no-texto3	nt-png	/tmp/nt/png.8m	141864	imagen: casi todo incompresible, solo queda el modelado
+arbol	arbol2.62g	/tmp/compresor-f1/corpus	2620837053	el producto entero con los defectos. Es la fila fija de bench/referencia.sh
+arbol	corpus64m	se arma en bench/referencia.sh: uno de cada tres, cortado a 64 MiB	67108864	el CM (--max) en cada cierre. Los 2,62 GB serian siete horas y una referencia que nadie corre no sirve
+arbol	deflate-banco2	/tmp/deflate-banco2	2770205399	los 2.522 flujos DEFLATE: la fase 3 con los defectos
+rival	corpus/codigo	/tmp/compresor-f1/corpus/codigo	136415253	el corpus contra el que se mide el campo (zpaq, zstd, xz)
+f6q3	f6q3-s32	/tmp/f6q3/frames-32/carril0-frame00001.bin	33552299	El frame 1 del carril de texto con --solid=32, volcado con VC_BANCO_FRAMES desde el corpus congelado de F6.Q3 (/tmp/corpus-f6q3/codigo, sello e1e4ad97...). Es la entrada de las condiciones (a)(b)(c) del arranque en frio; (d) mide el par f0+f1 concatenado y F0 el frame 0, asi que los bytes_in del libro mayor NO son todos este numero a proposito. Se reproduce con VC_BANCO_SOLIDO=1 VC_BANCO_FRAMES=<dir> vcompresor compress --max --solid=32.

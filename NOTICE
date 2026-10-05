@@ -1,0 +1,91 @@
+vcompresor
+Copyright (c) 2026 Vértice Labs
+
+Este producto se distribuye bajo doble licencia: AGPL-3.0 (ver LICENSE) o licencia comercial
+(ver LICENSE-COMMERCIAL.md).
+
+
+================================================================================
+DEPENDENCIAS DE TERCEROS
+================================================================================
+
+Verificadas contra el registro, no de memoria. Todas permisivas: ninguna impone copyleft
+sobre vcompresor, y todas admiten su inclusión tanto en la versión AGPL como en la comercial.
+
+  preflate-rs  0.7.6    Apache-2.0
+  blake3       1.8.5    CC0-1.0 OR Apache-2.0 OR Apache-2.0 WITH LLVM-exception
+  zstd         0.13.3   MIT
+  zstd-sys     2.0.16   MIT OR Apache-2.0   (empaqueta libzstd: BSD-3-Clause OR GPL-2.0;
+                                             vcompresor se acoge a BSD-3-Clause)
+  fuser        0.14.0   MIT
+  anyhow       1.0.104  MIT OR Apache-2.0
+  libc         0.2      MIT OR Apache-2.0
+
+Apache-2.0 es compatible en un solo sentido con AGPL-3.0: su código puede incorporarse a un
+proyecto AGPL-3.0, no al revés. Esa dirección es la que nos sirve.
+
+
+================================================================================
+SOBRE paq8px — DECLARACIÓN DE INDEPENDENCIA DE CÓDIGO
+================================================================================
+
+paq8px (Matt Mahoney y otros) se distribuye bajo GPL. vcompresor **no contiene, no traduce y
+no deriva** de código de paq8px, ni de ninguna otra implementación de la familia PAQ.
+
+paq8px se ha usado exclusivamente como:
+
+  (a) BINARIO de referencia para medir, ejecutado sin modificar, para comparar tamaños de
+      salida sobre los mismos datos; y
+  (b) FUENTE LEÍDA para entender qué categorías de modelo existen en el estado del arte —del
+      mismo modo que se lee un artículo publicado.
+
+Todos los modelos de vcompresor se diseñaron a partir de mediciones sobre nuestros propios
+datos. El caso más claro, y está documentado en el historial: la familia de modelos numéricos
+(F2.37) salió de instrumentar el coste por posición con VC_COSTEPOS y descubrir que los
+dígitos se llevaban el 79% de los bits en volcados SQL — no de leer su lista de modelos. Y la
+familia de contextos indirectos, que SÍ se intentó copiando su receta, se descartó porque
+empeoraba: la conclusión escrita en `docs/f2.36-cascada-sse-y-la-familia-que-no-fue.md` es
+literalmente que copiar su lista de modelos sin mirar la propia es el error.
+
+Los ficheros english.dic / english.exp / english.emb que acompañan a paq8px NO se distribuyen
+con vcompresor ni se usan en él.
+
+Esta declaración se hace de forma contemporánea al desarrollo, no a posteriori, y el historial
+de git la respalda.
+
+
+================================================================================
+OTRAS REFERENCIAS USADAS COMO MEDIDA, NO COMO CÓDIGO
+================================================================================
+
+  zpaq        Matt Mahoney — dominio público / GPL según versión. Binario de referencia.
+  zstd        Meta — BSD-3-Clause. Usado como dependencia (ver arriba) y como referencia.
+  xz          Dominio público / LGPL. Binario de referencia.
+  cmix, nncp  Referencias bibliográficas. No usados.
+
+Ninguno de estos binarios se distribuye con vcompresor.
+
+## Código de terceros incluido
+
+### preflate — `crates/preflate/`
+
+Este producto incluye software desarrollado por Microsoft Corporation.
+
+    preflate-rs 0.7.6
+    Copyright (c) Microsoft Corporation
+    Autor: Kristof Roomp <kristofr@microsoft.com>
+    https://github.com/microsoft/preflate-rs
+    Licencia: Apache License, Version 2.0
+
+El texto completo de la licencia está en `crates/preflate/LICENSE`. Los cambios respecto al
+original están listados en `crates/preflate/PROCEDENCIA.md`, y cada fichero modificado lleva un
+aviso en su cabecera, como exige la sección 4(b) de la licencia.
+
+Está incluido en el árbol y no como dependencia externa por una razón concreta y medida:
+preflate re-deflata el plano entero solo para verificarse —41,58 s de sus 172,97, el 24% de su
+tiempo— porque nació como herramienta suelta sin nadie que la comprobara. Aquí `vcompresor
+verify` revisa el archivo completo después. Desde fuera del árbol ese cambio no se podía hacer.
+
+El traslado se verificó comprobando que la salida es **idéntica byte a byte** con la versión de
+crates.io, con binarios demostrablemente distintos: 42.870.492 B sobre 64 MB de PNG en los dos
+casos.

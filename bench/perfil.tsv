@@ -1,0 +1,9 @@
+# perf record sobre --max, muestra real. 2026-07-28, Ryzen 5 3600.
+funcion	pct
+Predictor::p	40.1
+Predictor::update	26.6
+fija_cubos	11.3
+busca_cubo	3.0
+punto_avx2	2.8
+actualiza_avx2	2.7
+set_byte_contexts	2.6

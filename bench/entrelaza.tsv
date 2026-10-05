@@ -1,0 +1,39 @@
+# ¿COMPRIME MAS SI LEEMOS N FICHEROS A LA VEZ EN VEZ DE UNO DETRAS DE OTRO?
+# Pregunta del dueño, 01-08. NUNCA SE HABIA PROBADO. Respuesta: NO, y por bastante.
+# Lo generan bench/entrelaza-mezcla.py y bench/entrelaza-shuffle.py.
+# Los cuatro montajes tienen LOS MISMOS BYTES: lo unico que cambia es el orden.
+muestra	montaje	vlz_esf6	vs_concatenado	vc_cm_nivel9	vs_concatenado
+logs (8 fich, 11,29 MB)	concatenado	404163	0.000%	415817	0.000%
+logs (8 fich, 11,29 MB)	entrelazado 1B	692774	+71.410%	687536	+65.346%
+logs (8 fich, 11,29 MB)	entrelazado 8B	492490	+21.854%	540605	+30.010%
+logs (8 fich, 11,29 MB)	entrelazado 64B	442207	+9.413%	451050	+8.473%
+logs (8 fich, 11,29 MB)	bit-transpuesto	781709	+93.414%	797218	+91.723%
+csvjson (8 fich)	concatenado	541135	0.000%	496119	0.000%
+csvjson (8 fich)	entrelazado 1B	1155180	+113.47%	1078210	+117.33%
+csvjson (8 fich)	entrelazado 64B	622563	+15.05%	572886	+15.47%
+csvjson (8 fich)	bit-transpuesto	1302499	+140.70%	1280723	+158.15%
+sql (8 fich)	concatenado	138323	0.000%	132360	0.000%
+sql (8 fich)	entrelazado 1B	146037	+5.58%	139905	+5.70%
+sql (8 fich)	entrelazado 64B	139134	+0.59%	133263	+0.68%
+sql (8 fich)	bit-transpuesto	148215	+7.15%	144310	+9.03%
+bin (8 fich)	concatenado	3276290	0.000%	3304668	0.000%
+bin (8 fich)	entrelazado 1B	4597662	+40.33%	4545152	+37.54%
+bin (8 fich)	entrelazado 64B	3520040	+7.44%	3472051	+5.07%
+bin (8 fich)	bit-transpuesto	4749186	+44.96%	4797908	+45.19%
+cmake 11,8 MB (dentro del fichero)	original	-	-	3546232	0.000%
+cmake 11,8 MB (dentro del fichero)	shuffle w=2	-	-	4999147	+40.97%
+cmake 11,8 MB (dentro del fichero)	shuffle w=4	-	-	5856406	+65.14%
+cmake 11,8 MB (dentro del fichero)	shuffle w=8	-	-	6571786	+85.32%
+cmake 11,8 MB (dentro del fichero)	shuffle w=16	-	-	7321233	+106.45%
+13_products.sql 17,0 MB (dentro)	original	-	-	2004628	0.000%
+13_products.sql 17,0 MB (dentro)	shuffle w=2	-	-	3302637	+64.75%
+13_products.sql 17,0 MB (dentro)	shuffle w=4	-	-	5103177	+154.57%
+13_products.sql 17,0 MB (dentro)	shuffle w=8	-	-	6832175	+240.82%
+13_products.sql 17,0 MB (dentro)	shuffle w=16	-	-	8147485	+306.43%
+# ── EL CONTROL POSITIVO (P13 del camino). Sin esto, 26 medidas en contra no prueban nada.
+control sintetico int32 8 MB	original	-	-	4416606	0.000%
+control sintetico int32 8 MB	shuffle w=4 (= al registro)	-	-	1219052	-72.40%
+control sintetico float64 8 MB	original	-	-	7606821	0.000%
+control sintetico float64 8 MB	shuffle w=8 (= al registro)	-	-	5117832	-32.72%
+# ── EL DETECTOR sobre el arbol REAL (P16): 1.612 ficheros de >=64 KB, sonda zstd -3 sobre 256 KB
+arbol real 1.612 ficheros	transponer gana en	73	4.53%	ahorro total	0.055%

@@ -1,0 +1,57 @@
+====================================================================================================
+EL NETO. Estado estable: se ingieren N PB/año, se guarda un volumen constante 12 meses.
+====================================================================================================
+
+--- rotacion 1%/dia, retencion 1 año -> x4.65 · se ingieren 4,650 TB/año ---
+                            guarda TB   CPU h/año  CPU €/año
+  restic                          360       7,632        488
+  borg                            302     879,878     56,214
+  defecto                         235      82,673      5,282
+  max                             119   1,231,829     78,700
+
+  NETO ANUAL de dejar restic y usarnos (+ = ganamos dinero, - = lo perdemos):
+  precio €/TB-mes              POR DEFECTO         --max
+  S3 Standard                      +27,081       -16,669
+  Backblaze B2 / Wasabi             +3,511       -62,177
+  bulk europeo                      -1,053       -70,989
+  disco propio                      -2,999       -74,745
+
+--- rotacion 3%/dia, retencion 1 año -> x11.95 · se ingieren 11,950 TB/año ---
+                            guarda TB   CPU h/año  CPU €/año
+  restic                          925      19,614      1,253
+  borg                            776   2,261,192    144,465
+  defecto                         605     212,461     13,574
+  max                             306   3,165,669    202,251
+
+  NETO ANUAL de dejar restic y usarnos (+ = ganamos dinero, - = lo perdemos):
+  precio €/TB-mes              POR DEFECTO         --max
+  S3 Standard                      +69,594       -42,838
+  Backblaze B2 / Wasabi             +9,023      -159,787
+  bulk europeo                      -2,706      -182,435
+  disco propio                      -7,706      -192,088
+
+====================================================================================================
+CUANTO TIENE QUE QUEDARSE EL DATO PARA QUE LA CPU SE PAGUE SOLA (por TB ingerido)
+====================================================================================================
+  Un dato que se borra a los 30 dias no da tiempo a amortizar nada. Uno que se archiva
+  7 años amortiza cualquier cosa. Este es el umbral exacto:
+  precio                       POR DEFECTO           --max
+  S3 Standard                       1.8 m         15.3 m
+  Backblaze B2 / Wasabi             6.9 m         58.5 m
+  bulk europeo                     15.4 m        129.9 m
+  disco propio                     32.0 m        270.7 m
+  (por encima de ~24 meses, en la practica, no compensa: el disco baja de precio mas
+   rapido que eso)
+
+====================================================================================================
+CONCLUSION
+====================================================================================================
+  1. El dinero esta en el modo POR DEFECTO, no en --max. Por defecto guarda 35% menos
+     que restic pagando solo 1.03 € de CPU por TB. --max guarda 67% menos
+     pero cuesta 16.82 € por TB: 16 veces mas CPU para 0.9 veces mas ahorro.
+  2. Contra borg a su maximo ganamos en las dos cosas. Ese cruce no hay que pensarlo.
+  3. --max no es un producto de respaldo: es un producto de ARCHIVO — dato frio que se
+     guarda años y casi no se lee. Ahi el reloj juega a favor y la CPU se paga sola.
+  4. La palanca que falta no es comprimir mas: es comprimir igual GASTANDO MENOS CPU.
+     Cada hora de CPU que le quitemos al modo por defecto vale 0.0639 €/TB directos.
+====================================================================================================

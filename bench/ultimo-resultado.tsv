@@ -1,0 +1,9 @@
+# corpus codigo: 136415253 B, 27162 ficheros + 130 directorios vacios
+# servidor Ryzen 5 3600 (12 hilos) CON la flota de agentes encima: los tiempos oscilan
+herramienta	bytes	ratio%	tiempo_s	round_trip
+vcompresor --max	10128120	7.42	365	OK 27292/27292 + diff -rq 0 diferencias
+zpaq -m5	10901842	7.99	182	n/a
+7z -mx9	12920611	9.47	39	n/a
+xz -9	13416612	9.84	50	OK
+mkdwarfs -l9	13428952	9.84	29	n/a
+zstd -19 --long=31	14028962	10.28	55	OK

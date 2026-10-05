@@ -1,0 +1,19 @@
+# EL TOPE DE OBSERVACIONES DEL STATEMAP: CUANTO SE CONGELA UN CONTEXTO MADURO
+# LA MARCA «VIGENTE» SE LEE DEL CODIGO, no se escribe a mano. Antes se escribia,
+# y al cambiar el modelo v3 dejo de ser cierta sin que nadie la tocara: leyendo
+# esta tabla se concluia que habia un 1,1% sin aplicar que YA estaba aplicado.
+# Vigente hoy: 127 (modelo v3). «vs_vigente» se recalcula contra el.
+# ⚠️ LAS MEDIDAS SON DE SU EPOCA. Se tomaron con el modelo de entonces; desde
+# entonces han entrado modelos nuevos y la cadena ISSE. No son falsas, pero no
+# son de ahora — remedido hoy, volver a los valores viejos cuesta 1,9151% y la
+# tabla decia 1,111%: el modelo actual aprovecha MAS el aprendizaje lento.
+# Lo escribe bench/tasas.py.
+tope	total	vs_vigente
+1023	3821779	+0.204
+511	3815640	+0.043
+255	3812955	-0.027
+191	3812941	-0.027
+127  <-- VIGENTE	3813989	+0.000
+95	3815584	+0.042
+63	3820933	+0.182
+47	3824154	+0.267

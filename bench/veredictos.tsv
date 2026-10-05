@@ -1,0 +1,15 @@
+# LOS VEREDICTOS. Se LEEN de bench/historia.jsonl: asi la carga de la maquina viaja
+# con el numero. La version anterior los tenia copiados a mano y publicaba una
+# pareja de carga 56 contra una de carga 6,5 sin poder saberlo.
+# «contexto» = que otras piezas estaban apagadas mientras se medio esta.
+# 1 PB, 12 meses, CPU a 0.0639 EUR/hora. No entran descomprimir, red ni peticiones.
+# Lo escribe bench/veredictos.py.
+pieza	corpus	contexto	pct_ciclos	pct_reloj	pct_bytes	sobre_el_ruido	suelo_de_ruido	carga_max	n	cuesta_CPU_eur_PB	ahorra_S3_eur_PB_ano	ahorra_Backblaze_eur_PB_ano	ahorra_bulk_eur_PB_ano	ahorra_disco_eur_PB_ano	veredicto
+E8E9	sub600	sola	1.75	1.86	0.185	?	desconocido (nada se repitio)	6.8	1+1	42	252	66	30	14	SIN SUELO — nada se repitio, no se puede afirmar
+JXL	arbol2.7g	sola	34.25	14.16	3.886	si	2.05%	4.9	2+2	293	3993	1040	469	225	DEPENDE del precio
+JXL	sub600	sola	17.92	16.87	4.814	?	desconocido (nada se repitio)	5.9	1+1	383	6571	1712	771	370	SIN SUELO — nada se repitio, no se puede afirmar
+agrupar	arbol2.7g	sin JXL	1.18	0.57	0.216	?	desconocido (nada se repitio)	6.5	1+1	10	230	60	27	13	SIN SUELO — nada se repitio, no se puede afirmar
+agrupar	arbol2.7g	sola	0.78	-0.19	0.218	NO	2.05%	3.7	2+2	-4	224	58	26	13	NO MEDIBLE — por debajo del ruido del banco
+agrupar	sub600	sola	1.76	0.73	0.097	?	desconocido (nada se repitio)	5.8	1+1	16	133	35	16	7	SIN SUELO — nada se repitio, no se puede afirmar
+log-ts	sub600	sola	1.02	1.66	0.005	?	desconocido (nada se repitio)	6.6	1+1	38	7	2	1	0	SIN SUELO — nada se repitio, no se puede afirmar
+preflate	sub600	sola	58.21	72.63	7.145	?	desconocido (nada se repitio)	5.4	1+1	1647	9753	2541	1145	549	SIN SUELO — nada se repitio, no se puede afirmar

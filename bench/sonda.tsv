@@ -1,0 +1,17 @@
+# LA SONDA DE F2.63: como de bien predice, y cuanto cuesta. Arbol de 360,4 MiB (codigo+sql+logs).
+# La verdad contra la que se compara: --max real sobre el arbol entero = 10.003.128 B (2,65%).
+version	muestra_zstd	muestra_cm	predice_max_pct	error_vs_real	sonda_seg
+primeros N bytes	32 MiB	32 MiB	1.94	-26.9%	170.0
+a zancadas	32 MiB	7,2 MiB	2.602	-1.7%	55.5
++ topes proporcionales	22,5 MiB	2,8 MiB	2.586	-2.3%	27.7
++ sonda en paralelo	22,5 MiB	2,8 MiB	2.586	-2.3%	18.5
+#
+# POR QUE LA MUESTRA POR EL PRINCIPIO FALLABA TANTO: los primeros 32 MiB del recorrido ordenado
+# son los ficheros alfabeticamente primeros, o sea todos de la misma familia. En este arbol
+# salieron 120 de codigo + 120 de logs + 78 de sql, y los logs comprimen a 1-2%: la sonda
+# creia estar mirando el arbol y estaba mirando su rincon mas comprimible.
+#
+# POR QUE SE PUEDE PARALELIZAR SIN FALSEAR NADA: la regla de medir en serie existe para los
+# RELOJES. Esto mide BYTES, y los bytes que saca un compresor de una entrada dada no dependen
+# de lo cargada que este la maquina. Verificado: dos ejecuciones dan la misma tabla y el mismo
+# sha de archivo (d227b00cdd0e583f).

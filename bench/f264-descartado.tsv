@@ -1,0 +1,28 @@
+# F2.64 — RESULTADO NEGATIVO. Sacar el esqueleto del indice y pasarlo por trozos y frames.
+# Funciona (ida y vuelta 0 diferencias en los tres corpus, archivos viejos legibles, fuzz
+# 12.000 ficheros OK) pero es el arreglo EQUIVOCADO. No se queda.
+corpus	indice_antes	indice_despues	instant_antes	instant_despues	tam_antes	tam_despues	delta
+png-fireworks	14498528	524908	14441264	744	25455219	26950404	+5.87%
+png-normal	3737251	3561415	2004	2245	151501612	153286525	+1.17%
+pdfoffice	8737826	8690743	8664994	8618277	77091115	77096638	0%
+#
+# POR QUE EL ARCHIVO CRECE. En el indice el esqueleto se comprimia como UN SOLO bloque con
+# zstd-19, compartiendo contexto entre todos los ficheros. Repartido en frames de 8 MiB pierde
+# ese contexto: 14,5 MB de indice se convierten en ~15,5 MB de frames.
+#
+# POR QUE EN PDFOFFICE NO CAMBIA NADA. Ni el indice ni el coste por instantanea se mueven. Esos
+# 8,6 MB NO son esqueleto: son las correcciones de preflate y la metadata de huecos. El cambio
+# se justifico con los documentos de oficina -el caso comun de respaldo empresarial- y ahi
+# arreglaba la mitad equivocada.
+#
+# LO QUE LA MEDIDA SI ESTABLECE. El problema no es DONDE vive la carga util de la transformada,
+# es que se DUPLICA en cada instantanea, sea esqueleto o correcciones. La solucion correcta es
+# guardarla una sola vez: un deposito de transformadas en el indice, y que el registro de cada
+# fichero apunte a la suya. Eso arregla pdfoffice Y fireworks, y a coste CERO de tamaño, porque
+# la carga se queda donde comprimia bien.
+#
+# LO QUE SE APROVECHA IGUAL: la comprobacion de compatibilidad de esta prueba construye el
+# binario ANTERIOR en un arbol aparte y AFIRMA SU PROPIA PREMISA (que el viejo tiene el
+# esqueleto crudo y el nuevo no) antes de comparar. Hoy un `cargo build | head` mato a cargo con
+# SIGPIPE, dejo el binario anterior en su sitio, y una prueba de compatibilidad dio verde
+# comparando el binario viejo consigo mismo. Ese patron se queda.

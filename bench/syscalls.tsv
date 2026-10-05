@@ -1,0 +1,41 @@
+# CUANTAS VECES SE TOCA CADA FICHERO. Contado con strace -c -f, que no opina.
+# Se parsea por NOMBRE DE COLUMNA: la columna «errors» de strace va vacia cuando no hay
+# errores, y leer el campo por posicion mezcla llamadas con errores. Paso.
+# Lo escribe bench/syscalls.sh.
+muestra	ficheros	config	llamada	llamadas	por_fichero	errores
+codigo	27162	--group	statx	155724	5.73	0
+codigo	27162	--group	read	139566	5.14	0
+codigo	27162	--group	openat	101466	3.74	1
+codigo	27162	--group	close	101465	3.74	0
+codigo	27162	--group	getdents64	39555	1.46	0
+codigo	27162	--group	mmap	93	0.00	0
+codigo	27162	--group	munmap	30	0.00	0
+codigo	27162	--group	lseek	4	0.00	0
+codigo	27162	--group	pread64	2	0.00	0
+codigo	27162	--no-group	statx	155724	5.73	0
+codigo	27162	--no-group	read	82777	3.05	0
+codigo	27162	--no-group	openat	74303	2.74	1
+codigo	27162	--no-group	close	74302	2.74	0
+codigo	27162	--no-group	getdents64	39555	1.46	0
+codigo	27162	--no-group	mmap	80	0.00	0
+codigo	27162	--no-group	munmap	21	0.00	0
+codigo	27162	--no-group	lseek	4	0.00	0
+codigo	27162	--no-group	pread64	2	0.00	0
+png	1749	--group	read	12444	7.11	0
+png	1749	--group	statx	10887	6.22	0
+png	1749	--group	openat	5751	3.29	1
+png	1749	--group	close	5750	3.29	0
+png	1749	--group	getdents64	785	0.45	0
+png	1749	--group	mmap	152	0.09	0
+png	1749	--group	munmap	89	0.05	0
+png	1749	--group	lseek	4	0.00	0
+png	1749	--group	pread64	2	0.00	0
+png	1749	--no-group	statx	10887	6.22	0
+png	1749	--no-group	read	5477	3.13	0
+png	1749	--no-group	openat	4001	2.29	1
+png	1749	--no-group	close	4000	2.29	0
+png	1749	--no-group	getdents64	785	0.45	0
+png	1749	--no-group	mmap	134	0.08	0
+png	1749	--no-group	munmap	75	0.04	0
+png	1749	--no-group	lseek	4	0.00	0
+png	1749	--no-group	pread64	2	0.00	0

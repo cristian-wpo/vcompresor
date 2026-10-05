@@ -1,0 +1,12 @@
+[workspace]
+members = ["crates/vc-core", "crates/vc-cli", "crates/vc-fuzz", "crates/vc-cm",
+           "crates/vc-spikes", "crates/vlz", "crates/preflate"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+
+[profile.release]
+lto = true
+codegen-units = 1

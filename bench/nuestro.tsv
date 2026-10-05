@@ -1,0 +1,13 @@
+# entrada	bytes	fuente
+sql.10m	249497	base F2.48 2026-07-28
+logs.10m	52081	base F2.48 2026-07-28
+csvjson.10m	556942	base F2.48 2026-07-28
+codigo.10m	817930	base F2.48 2026-07-28
+enwik8.10m	2148932	base F2.48 2026-07-28
+corpus/codigo	9657771	multibench 2026-07-28
+corpus/logs	3233152	multibench 2026-07-28
+corpus/sql	8205349	multibench 2026-07-28
+corpus/csvjson	1618499	multibench 2026-07-28
+silesia	39809371	bench/silesia.tsv
+arbol50mb	3588707	--solid 2026-07-28
+corpus/pdfoffice	76546740	F2.55 2026-07-29

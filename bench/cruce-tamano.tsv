@@ -1,0 +1,41 @@
+# EL PUNTO DE CRUCE: a partir de que tamaño el archivo deja de ser MAS GRANDE que la
+# entrada. Medido 2026-07-30 en el servidor. bench/cruce.sh lo reproduce.
+#
+# LO QUE ESTABLECE:
+#   suelo fijo       118 B un archivo vacio
+#   texto            cruza a ~1 KB (100 B -> 195 B infla; 1.000 B -> 282 B ya baja)
+#   INCOMPRESIBLE    NUNCA cruza: +176 B a 100 B, +180 B a 1 MB, +985 B a 10 MB
+#   muchos ficheros  cruza a ~1.000 ficheros; coste por fichero converge a ~25 B
+#
+# La tercera linea es la que importa: sobre dato ya comprimido -video, JPEG, un .zip- el
+# archivo SIEMPRE sera mayor. Le pasa a todo archivador. Desde F2.76 se DICE.
+#
+=== 1. UN fichero, tamaños crecientes ===
+clase             entrada      archivo      ratio   sobrecoste    cruzado
+texto                   0          159         0%          159         no
+texto                 100          195     195.0%           95         no
+texto                1000          282      28.2%         -718         SI
+texto               10000         1927      19.2%        -8073         SI
+texto              100000         8443       8.4%       -91557         SI
+texto             1000000        60523       6.0%      -939477         SI
+texto            10000000      1042265      10.4%     -8957735         SI
+
+aleatorio               0          159         0%          159         no
+aleatorio             100          276     276.0%          176         no
+aleatorio            1000         1180     118.0%          180         no
+aleatorio           10000        10180     101.8%          180         no
+aleatorio          100000       100184     100.1%          184         no
+aleatorio         1000000      1000240     100.0%          240         no
+aleatorio        10000000     10000985     100.0%          985         no
+
+=== 2. MUCHOS ficheros pequeños: el indice crece con el NUMERO ===
+ficheros          entrada      archivo      ratio    B/fichero
+1                      25          202     808.0%        202.0
+10                    251          481     191.6%         48.1
+100                  2592         2824     108.9%         28.2
+1000                26893        25124      93.4%         25.1
+10000              278894       248495      89.1%         24.8
+
+=== 3. el SUELO: que cuesta un archivo vacio ===
+  arbol vacio -> 118 B
+FIN-CRUCE-CENTINELA

@@ -1,0 +1,6 @@
+# mozilla + ooffice de Silesia, 57.372.672 B. Efecto del filtro x86.
+herramienta	bytes	ratio%
+zpaq -m5	14095419	24.57
+vcompresor --max (con filtro x86)	14165539	24.69
+vcompresor --max (sin filtro)	14470608	25.22
+xz -9	15794468	27.53

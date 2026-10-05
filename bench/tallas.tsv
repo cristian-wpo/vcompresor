@@ -1,0 +1,18 @@
+# LA TALLA DE LOS FICHEROS. Por que el banco no podia ver la perdida de velocidad:
+# midio sobre 656 ficheros de 642 KB de media y el arbol real tiene 43.298 con
+# MEDIANA de 1.972 B. No son dos tamaños del mismo problema, son dos problemas.
+# Lo escribe bench/tallas.py.
+arbol	ficheros	bytes	media_B	mediana_B	nota
+corpus del banco (nivel-zstd.tsv)	656	421397452	642374	-	todo ficheros grandes
+arbol real (F3.1)	43298	2620837053	60530	1972	la mitad por debajo de 2 KB
+
+reparto	ficheros	pct_ficheros	bytes	pct_bytes	nota
+ficheros por debajo de CDC_MIN (64 KB)	38225	88.3% de los ficheros	243089138	9.3% de los bytes	un solo trozo: el troceador no rueda ni un byte, y aun asi se paga todo el coste por fichero
+ficheros por encima	5073	11.7% de los ficheros	2377747915	90.7% de los bytes	estos si se trocean; aqui la deduplicacion tiene algo que hacer
+
+derivado	valor				nota
+ficheros por segundo	97				43.298 / 445 s — LA UNIDAD QUE MANDA, no MB/s
+ms de CPU por fichero	15				653 s-CPU / 43.298 — enorme para 2 KB
+percentil 50	1972				B
+percentil 90	82998				B
+percentil 99	733691				B

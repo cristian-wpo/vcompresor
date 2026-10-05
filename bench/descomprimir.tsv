@@ -1,0 +1,4 @@
+operacion	modo	segundos	ram_mb	nota
+comprimir	--max	42.9	655	arbol de 900 ficheros, 5,1 MB, 1 frame
+descomprimir	--max	107.8	7245	2,5x mas lento y 11x mas memoria
+descomprimir	por defecto	0.1	57	sin carril CM

@@ -1,0 +1,44 @@
+# LA ROTACION DIARIA. Arbol de 400,9 MiB (456 ficheros de codigo, SQL y logs), modo POR DEFECTO.
+# Ronda 1: SOBRESCRITURA en sitio de 512 B en 7 ficheros (1,53%). 3.584 bytes cambiados de verdad.
+# Se mide en BYTES, que no dependen de la carga de la maquina.
+herramienta	copia1	copia2	añade	x_lo_cambiado	ventaja_vs_restic
+restic --compression max	31764263	31932389	168126	46.9	1.00
+borg -C zstd,22	26779449	26933432	153983	42.9	1.09
+vcompresor (por defecto)	21275875	21351462	75587	21.0	2.22
+#
+# LO QUE VALIDA. El modelo de euros (236dc15) supone que nuestra ventaja se aplica IGUAL a la
+# copia base y a los deltas diarios, y de eso dependen los +69.594 EUR/PB-año. Medido: en la
+# BASE ganamos 1,49x y en el DELTA 2,22x. O sea que el modelo se queda CORTO, no largo.
+#
+# POR QUE GANAMOS EN EL DELTA. Al editar un byte, el troceador por contenido invalida el trozo
+# entero que lo contiene. Nuestros trozos son de 256 KiB de media (64 KiB-1 MiB); restic usa
+# ~1 MiB y borg ~2 MiB. Trozo mas pequeno = menos byte re-guardado por cada edicion.
+#
+# LO QUE ESTA RONDA NO PRUEBA: la edicion fue sobrescritura EN SITIO, que no desplaza el
+# contenido posterior. El caso duro para un troceador por contenido es la INSERCION, que
+# desplaza todo lo que va detras. Ronda 2.
+#
+# RONDA 2 — el caso duro: INSERCION (desplaza todo lo que va detras), APENDICE y SOBRESCRITURA
+# a partes iguales sobre los 60 ficheros MAS GRANDES, mas 5 ficheros nuevos. 400,9 MiB.
+# 25.040 B editados + 1.433.213 B nuevos = 1.458.253 B de contenido nuevo.
+herramienta	copia1	copia2	añade	x_lo_nuevo	ventaja_delta	ventaja_base
+restic --compression max	31999366	37869020	5869654	4.0	1.00	1.00
+borg -C zstd,22	26779412	33585634	6806222	4.6	0.86	1.19
+vcompresor (por defecto)	21275877	22661939	1386062	0.9	4.23	1.50
+#
+# EL RESULTADO. Con insercion de por medio la ventaja NO se estrecha: pasa de 2,22x (ronda 1,
+# solo sobrescritura) a 4,23x. En la copia base es 1,50x. O sea que nuestra ventaja es casi
+# TRES VECES mayor en el delta que en la base, justo al reves de lo que temiamos.
+#
+# POR QUE. Insertar bytes desplaza todo lo que va detras. Un troceador de tamaño fijo perderia
+# el fichero entero; los tres son por contenido, asi que re-sincronizan — pero lo que se
+# re-guarda mientras tanto es un trozo, y el nuestro es de 256 KiB contra ~1 MiB de restic y
+# ~2 MiB de borg. restic y borg acaban guardando 4 y 4,6 veces los bytes que de verdad
+# cambiaron; nosotros 0,9, que es menos que el dato nuevo porque ademas lo comprimimos.
+#
+# LO QUE ESTO LE HACE AL MODELO DE EUROS. El modelo supone ventaja de BASE (1,53x) tambien en
+# los deltas, y en regimen estable los deltas son el 92% de lo guardado. Con 4,23x medido, las
+# cifras de 236dc15 (+9.023 EUR/PB-año a precio B2, +69.594 a S3) son un SUELO, no una
+# estimacion. No se re-calculan aqui: convertir "60 de 456 ficheros tocados de una vez" en "3%
+# diario durante un año" exige un modelo de rotacion que NO esta validado, y sobre todo exige
+# saber como dedupica la rotacion REPETIDA sobre los mismos ficheros dia tras dia. Sin medir.

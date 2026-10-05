@@ -1,0 +1,35 @@
+modelo	ciclos_pct	fallos_pct
+orden-0	-0.22	-1.42
+orden-1	-0.88	-1.51
+orden-2	-0.72	-1.70
+orden-3	-1.00	-0.93
+orden-4	-0.95	-1.94
+orden-5	-1.30	-0.16
+palabra	0.01	0.59
+orden-8	-0.36	0.08
+sparse-d2	-0.00	2.35
+sparse-d1+3	-0.37	-0.51
+indirecto-1	-0.03	-0.11
+columna x sep	-0.12	-0.02
+encima x col	-1.30	-2.56
+encima x byte	-0.80	-0.42
+orden-12	-1.17	-2.60
+pareja-palabra	-0.95	-1.78
+pareja-minus	-1.06	-1.66
+columna2 x sep2	-0.43	-0.11
+encima2 x col2	-0.20	-1.15
+encima2 x byte	0.50	-0.61
+forma-texto	-0.24	-2.39
+forma-texto-larga	-0.43	-0.99
+sparse-paso4	-1.10	-2.21
+sparse-paso8	-0.57	-0.73
+sparse-paso2y4	-1.45	-2.30
+indirecto-2	-0.91	-0.74
+num:digito-encima	0.08	0.82
+num:largo	-1.54	-0.74
+num:delta	-0.77	-2.01
+num:prefijo	-1.42	-2.00
+txt:trigrama	-0.35	0.09
+txt:raiz	0.62	0.85
+txt:trigrama-raices	-0.53	3.64
+txt:skip-grama	-1.10	-1.67

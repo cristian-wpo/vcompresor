@@ -1,0 +1,190 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""LAS PREGUNTAS DEL CAMINO: lo que hay que preguntarle a algo QUE YA FUNCIONA.
+
+Encargo del dueño, dicho en el momento en que aparecio la primera: «cuantas veces le
+preguntamos al nucleo lo mismo — eso es lo que debe salir, todo ese tipo de preguntas,
+marcarlo en algun lado». Esto es el algun lado.
+
+LA DIFERENCIA CON bench/preguntas.tsv. Aquella tabla son los AGUJEROS: cosas que no sabemos y
+habria que medir. Esta es otra cosa. Aqui no falta ningun dato: la pieza funciona, las pruebas
+pasan, el archivo es correcto. Lo que falta es haber PREGUNTADO.
+
+POR QUE LA PREGUNTA VALE MAS QUE EL HALLAZGO. Un hallazgo se arregla una vez. Una pregunta se
+le puede hacer a la siguiente pieza, y a la de despues, y a un proyecto de un cliente que no
+tiene nada que ver con este. «¿Cuantas veces le preguntamos al nucleo lo mismo?» encontro seis
+stat por fichero en el archivador; la misma pregunta, hecha a un backend, encuentra la consulta
+que se repite dentro del bucle. Por eso se guardan las preguntas y no solo las respuestas.
+
+DE DONDE SALEN. Ninguna se invento en abstracto: cada una es la generalizacion de algo que
+aparecio mirando este codigo. Se anota que la disparo, para que se vea que no es una lista de
+buenas intenciones.
+
+COMO SE USA. Contra cualquier pieza que ya funcione, de arriba abajo. Una pieza que pasa las
+doce no esta terminada —siempre queda medir— pero ya no tiene desperdicio de los baratos.
+"""
+import csv
+import collections
+
+# id · la pregunta · por que encuentra desperdicio · que encontro aqui · estado
+P = [
+("P1", "¿Cuantas veces le preguntamos al nucleo lo mismo?",
+ "Una llamada al sistema es cara y no se ve: no aparece en el perfil como una linea propia, "
+ "aparece repartida. Y el compilador no puede quitarla, porque no sabe que el disco no ha "
+ "cambiado entre las dos.",
+ "SEIS stat por fichero devolviendo la misma estructura. Dos de ellas —meta_de y duenos_de— "
+ "escritas una debajo de otra para leer dos mitades del mismo struct. Ver D1 y D2.",
+ "CONTESTADA, y con arreglo pendiente"),
+
+("P2", "¿Cuantas veces leemos el mismo byte?",
+ "Leer dos veces sale casi gratis en el reloj —la segunda la sirve la cache de paginas— y por "
+ "eso no duele lo suficiente para que nadie lo mire. Pero se paga en syscalls, en copias de "
+ "memoria y en cache de datos, que es justo lo que escasea.",
+ "Hasta tres aperturas del mismo fichero: agrupar lee 1 MiB, firma_de abre para leer 8 bytes, "
+ "y fs::read lo abre entero. Ver D3 y D5.",
+ "CONTESTADA, y con arreglo pendiente"),
+
+("P3", "¿Reservamos memoria por el caso peor o por el caso real?",
+ "El caso peor es el que se escribe sin pensar, y suele estar tres ordenes de magnitud por "
+ "encima del caso normal. Ademas cruza umbrales invisibles: en glibc, pasar de 128 KiB cambia "
+ "la reserva de puntero-que-avanza a mmap+munmap, y eso son dos syscalls por reserva.",
+ "vec![0u8; 1 MiB] por fichero para calcular cuatro numeros, con una mediana de arbol real de "
+ "1.972 B. Se pide un mega para leer dos kilos. Ver D3.",
+ "CONTESTADA, y con arreglo pendiente"),
+
+("P4", "¿Tiramos algo que ya habiamos calculado?",
+ "Es el desperdicio mas facil de arreglar y el mas dificil de ver, porque el que tira el dato "
+ "y el que lo vuelve a pedir suelen estar en funciones distintas y escritas en meses distintos.",
+ "recorrer() pide el struct entero de cada fichero y se queda con un enum de UN BYTE. Y la "
+ "bascula del banco tiraba el desglose por fases despues de siete minutos de medida. Ver D1, D6.",
+ "CONTESTADA — la del banco arreglada hoy"),
+
+("P5", "¿El ORDEN de las fases obliga a repetir trabajo?",
+ "Cada fase suele estar bien por dentro. El desperdicio esta entre dos, y no lo ve nadie que "
+ "mire una sola: solo aparece dibujando la tuberia entera y preguntando que sabe cada fase que "
+ "la siguiente vuelve a averiguar.",
+ "agrupar corre ANTES de stat, asi que no puede saber el tamaño de los ficheros y tiene que "
+ "reservar por el caso peor. No es un fallo de la funcion: es del orden. Ver D3.",
+ "CONTESTADA, y con arreglo pendiente"),
+
+("P6", "¿Estamos optimizando la perilla que importa?",
+ "Una perilla que se puede ajustar atrae todo el esfuerzo, aunque mueva poco. Lo que decide de "
+ "verdad suele ser una decision de si/no que nadie llamo «ajuste» y por eso nadie ajusta.",
+ "--price sondea los datos del usuario para elegir el NIVEL de zstd, que entre 17 y 19 mueve un "
+ "0,8%. Y no toca los CARRILES, que van de 0,15x a 5,92x de retorno. Ver D8.",
+ "CONTESTADA — es el arreglo mas rentable de la lista"),
+
+("P7", "¿La justificacion se llego a medir alguna vez?",
+ "Un comentario que dice «cuesta milisegundos» o «es barato» congela la pregunta: el siguiente "
+ "que pase lo lee y no lo comprueba. Una justificacion sin medida al lado es una opinion con "
+ "aspecto de dato.",
+ "«Los stat vienen calientes del recorrido, asi que cuesta milisegundos» — escrito encima de un "
+ "bucle que hace 43.298 llamadas al nucleo, y nunca medido.",
+ "CONTESTADA — se mide con bench/syscalls.sh"),
+
+("P8", "¿Hacemos el mismo trabajo dos veces con parametros distintos?",
+ "Cuando dos partes necesitan casi lo mismo pero no exactamente, lo natural es escribir dos "
+ "pasadas. Casi siempre se pueden fundir en una que saque las dos cosas, y casi nunca se mira.",
+ "sketch() trocea con gear y hashea con blake3 el primer MiB; la fase de leer+trocear vuelve a "
+ "trocear con gear y a hashear con blake3 esos mismos bytes, con otros parametros. Ver D4.",
+ "CONTESTADA, y con arreglo pendiente"),
+
+("P9", "¿Pagamos el caso general para servir al caso raro?",
+ "Una funcion que casi nadie usa puede estar arrastrando dependencias, memoria o arranque para "
+ "todos los demas. El coste no aparece atribuido a ella: aparece repartido en el binario.",
+ "fuser mete 13 crates en el binario de TODO EL MUNDO por un `mount` que solo existe en Linux y "
+ "que casi nadie usa. Ver la tabla de terceros.",
+ "CONTESTADA — pendiente ponerlo tras una caracteristica apagada"),
+
+("P10", "¿El numero viaja con su contexto, o se copio suelto?",
+ "Un numero copiado a mano pierde lo que lo hacia interpretable: cuando se tomo, en que "
+ "maquina, con que carga, con que commit. Y sin eso no se puede saber si dos numeros son "
+ "comparables — pero se comparan igual, porque estan uno al lado del otro en una tabla.",
+ "veredictos.py tenia las medidas copiadas dentro y publicaba una de carga 56,3 contra una de "
+ "carga 6,5. Dos de los cinco veredictos eran falsos. Ver D7.",
+ "CONTESTADA — arreglada hoy"),
+
+("P11", "¿Lo que medimos sigue siendo lo que creemos que medimos?",
+ "Un defecto que cambia, una bandera que se renombra, un fichero que se movio: la medida sigue "
+ "corriendo y sigue dando un numero. No falla. Simplemente ya no mide lo que dice medir.",
+ "La ablacion de agrupar iba a comparar la configuracion por defecto contra --no-group, DESPUES "
+ "de que el defecto pasara a ser sin agrupar. Habria publicado «agrupar cuesta 0,00%». Se pillo "
+ "porque los bytes salieron identicos, no porque nada fallara.",
+ "CONTESTADA — el guion pide --group explicito y avisa si dos configuraciones sacan lo mismo"),
+
+("P13", "¿Quien comprueba la prueba?",
+ "Una prueba es codigo sin pruebas. Y en un formato binario es peor: un vector de bytes tecleado "
+ "a mano dentro de un test es una SEGUNDA IMPLEMENTACION del formato, escrita sin querer, sin "
+ "revisar y sin que nadie la contraste con nada.",
+ "copia_solapada llevaba fijado 4b 4c 84 00 00 como «el DEFLATE de aaaaaa». zlib lo decodifica "
+ "como OCHO aes. Nuestro descompresor devolvia ocho —o sea, lo mismo que zlib— y el test lo "
+ "llamaba fallo nuestro. Alguien tecleo 0x84 donde van 0x04 0x01. Se resolvio contrastando con "
+ "una implementacion independiente, no razonando sobre la nuestra.",
+ "CONTESTADA — arreglada hoy, y el test dice ahora como regenerar sus vectores"),
+
+("P14", "¿Corremos TODAS nuestras suites, o solo la que conocemos?",
+ "Cuando hay mas de una suite, «esta verde» se convierte en una frase ambigua. La que se corre "
+ "se corre siempre; la otra se queda roja sin que nadie lo note, y cuanto mas tiempo pasa mas "
+ "cara es de arreglar.",
+ "bench/producto.sh daba 29 verdes y 0 FALTA, y con eso se dio el dia por bueno. `cargo test` "
+ "tenia un rojo desde por la mañana. Dos suites, y la costumbre solo miraba una.",
+ "CONTESTADA — 11/11 verde; falta que algo corra las dos a la vez"),
+
+("P15", "¿Es esta la MEJOR prueba posible para esta pregunta, o solo una valida?",
+ "Una prueba puede ser correcta —mide lo que dice medir— y aun asi ser la peor forma de "
+ "contestar la pregunta. Hay una jerarquia: (1) medir DIRECTAMENTE la cantidad, sin ruido; "
+ "(2) restar dos medidas directas, y los ruidos se suman; (3) restar dos TOTALES donde lo que "
+ "buscas es una parte pequeña, y el ruido te ahoga. Casi siempre se escribe la del nivel 3 "
+ "porque es la que sale sola, y casi siempre existe una del nivel 1 que nadie busco.",
+ "agrupar: se gastaron SEIS compresiones del arbol entero —media hora de maquina— restando dos "
+ "totales de 305 s para sacar un 0,78% que quedaba por debajo del suelo de ruido de 2,05%. "
+ "VC_FASES mide la fase «agrupar» DIRECTAMENTE, en una sola pasada y sin restar. Estaba en el "
+ "codigo desde esa misma mañana. · El barrido del troceado movio las tres perillas a la vez y "
+ "hubo que repetirlo entero de una en una. · M4 se hizo con dos muestras y hubo que rehacerlo "
+ "con cinco. · Y el suelo de ruido sale de DOS repeticiones: eso da un rango, no una "
+ "dispersion, y todos los «no medible» de hoy descansan en el.",
+ "CONTESTADA en parte — la jerarquia esta escrita; falta aplicarla a las pruebas que ya existen"),
+
+("P16", "¿Se puede medir esto SIN construir antes lo que la medida justificaria?",
+ "Hay preguntas que no se pueden contestar mirando: para saber lo que cuesta reiniciar algo "
+ "hace falta poder NO reiniciarlo; para saber lo que ahorra una cache hace falta la cache. Si "
+ "no se ve a tiempo, se acaba montando una prueba que parece contestar y en realidad mide otra "
+ "cosa —normalmente la variable que si se podia mover—. Y esa prueba da un numero, que es lo "
+ "peligroso. Detectarlo cambia la decision: o se decide con una COTA en vez de con una cifra, o "
+ "se construye un prototipo barato aceptando que se construye a ciegas. Las dos son legitimas; "
+ "lo que no lo es es creerse el numero de una prueba que no podia dar ese numero.",
+ "M1: para saber lo que cuesta que el modelo aprenda y olvide en cada tramo, se comparo 7 "
+ "tramos contra 2. Salio +1,054%, el signo esperado. Pero 4 tramos salieron -0,316% MEJOR que "
+ "2, y eso no lo explica el olvido: los tramos se llenan en orden de fichero, asi que su tamaño "
+ "decide tambien QUE FICHEROS CAEN JUNTOS. La prueba movia dos cosas y solo se podia mover una. "
+ "Separarlas exige arrastrar el modelo entre tramos sin tocar las fronteras — que es el cambio "
+ "que M1 queria justificar.",
+ "CONTESTADA — y M1 queda con una COTA (~1%) en vez de con una cifra, dicho asi"),
+
+("P12", "¿El instrumento conserva todo lo que la medida produjo?",
+ "Medir cuesta tiempo de maquina. Si el instrumento se queda con la mitad, la otra mitad hay "
+ "que volver a comprarla entera.",
+ "mide.sh mandaba el stderr del programa a un temporal y lo borraba: el desglose por fases "
+ "costaba siete minutos y se tiraba. Ver D6.",
+ "CONTESTADA — arreglada hoy con -s"),
+]
+
+with open("bench/preguntas-camino.tsv", "w", newline="") as f:
+    f.write("# LAS PREGUNTAS DEL CAMINO: lo que hay que preguntarle a algo QUE YA FUNCIONA.\n")
+    f.write("# No son agujeros (eso es preguntas.tsv, cosas que no sabemos). Aqui no falta\n")
+    f.write("# ningun dato: la pieza funciona y las pruebas pasan. Lo que falta es haber\n")
+    f.write("# PREGUNTADO. La pregunta vale mas que el hallazgo, porque se le puede hacer a la\n")
+    f.write("# siguiente pieza — y a un proyecto de cliente que no tiene nada que ver con este.\n")
+    f.write("# Lo escribe bench/preguntas-camino.py.\n")
+    w = csv.writer(f, delimiter="\t")
+    w.writerow(["id", "la_pregunta", "por_que_encuentra_desperdicio", "que_encontro_aqui",
+                "estado"])
+    w.writerows(P)
+
+c = collections.Counter(r[4].split()[0] for r in P)
+print(f"bench/preguntas-camino.tsv: {len(P)} preguntas · {dict(c)}\n")
+for r in P:
+    print(f"  [{r[0]:<3}] {r[1]}")
+print()
+print(f"  Las {len(P)} se le hacen a CUALQUIER pieza que ya funcione, de arriba abajo.")
+print("  Pasarlas no es estar terminado: es no tener desperdicio de los baratos.")

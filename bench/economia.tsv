@@ -1,0 +1,10 @@
+# €/TB-mes ahorrados y meses de amortizacion. Precios de lista, NO medidos.
+caso	precio_eur_tb_mes	ahorro_eur_tb_mes	meses_amortizacion	ahorro_eur_pb_ano
+defecto_vs_borg	21.3	0.3055	0	3666
+defecto_vs_borg	5.55	0.0796	0	955
+defecto_vs_borg	2.5	0.0359	0	430
+defecto_vs_borg	1.2	0.0172	0	207
+max_vs_restic	21.3	1.1029	15.3	13235
+max_vs_restic	5.55	0.2874	58.5	3449
+max_vs_restic	2.5	0.1295	129.9	1553
+max_vs_restic	1.2	0.0621	270.7	746
