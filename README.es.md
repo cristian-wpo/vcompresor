@@ -3,6 +3,8 @@
 Archivador que **deshace los formatos comprimidos en vez de tragárselos**, y que devuelve
 los ficheros byte a byte.
 
+Hecho por [Vértice Labs](https://verticelabs.es/vcompresor) (León, España). *[Read in English](README.md).*
+
 Un archivador normal ve un PNG, un `.docx` o un `.zip` como bytes opacos y no puede hacer nada
 con ellos: ya vienen comprimidos. vcompresor los **despliega** —deshace el DEFLATE, deshace el
 JPEG—, comprime lo de dentro con un modelo de contextos propio, y al extraer los **vuelve a
